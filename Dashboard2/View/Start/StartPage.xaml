@@ -1,0 +1,363 @@
+﻿<Page x:Class="Dashboard2.View.Start.StartPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Dashboard2.View.Start"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="1230"     
+      Title="StartPage"
+      Background="#EDF2FF">
+
+    <Grid Width="1200" Height="754">
+        <Grid  Margin="0,0,0,0"  Width="1190" Height="750" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- NUMBER OF CAR IN FLEET - SQUARE -->
+                <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource MainSquareBorder}"  >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="3*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- HEADING OF SQUARE -->
+                        <Grid Grid.Row="0" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- blue square -->
+                            <Grid Grid.Column="0">
+                                <Border Style="{StaticResource BlueSquareHeader}"/>
+                            </Grid>
+
+                            <!-- header content -->
+                        <Border Grid.Column="1" Style="{StaticResource HeaderUnderline}" >
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Flota"  Style="{StaticResource TextblockMainTitle}"/>
+
+                                <TextBlock Grid.Row="1" Text="Stan liczbowy" Style="{StaticResource TextblockSecondTitle}"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                        <!-- CONTENT OF SQUARE -->
+                        <Grid Grid.Row="1" Background="Transparent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- left site of content -->
+                            <Grid Grid.Column="0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!--  "   -->
+
+                                    <TextBlock Grid.Column="0"  Text="{Binding AllCarsCount,Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                               Style="{StaticResource TextblockContentOfSquare}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding AllCarsString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextblockSecondContentOfSquare}" />
+                                    </Grid>
+
+                                </Grid>
+                            </Grid>
+
+                            <!-- right site of content (icon) -->
+                        <Grid Grid.Column="1">
+                            <Image Margin="0,10,10,10" Stretch="Fill" />
+                        </Grid>
+                        </Grid>
+                    </Grid>
+                </Border>
+          
+          
+
+            <!-- NUMBER OF CARs IN GPS MONITORING SYSTEM  - SQUARE -->
+            <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource MainSquareBorder}"  >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER OF SQUARE -->
+                    <Grid Grid.Row="0" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- blue square -->
+                        <Grid Grid.Column="0">
+                            <Border Style="{StaticResource BlueSquareHeader}"/>
+                        </Grid>
+
+                        <!-- header content -->
+                        <Border Grid.Column="1" Style="{StaticResource HeaderUnderline}" >
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Monitoring GPS" Margin="7,2,0,0" Style="{StaticResource TextblockMainTitle}"/>
+
+                                <TextBlock Grid.Row="1" Text="Stan liczbowy" Style="{StaticResource TextblockSecondTitle}"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- CONTENT OF SQUARE -->
+                    <Grid Grid.Row="1" Background="Transparent" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- left site of content -->
+                        <Grid Grid.Column="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock x:Name="AllCarsWithGpsCount" Grid.Column="0" Text="{Binding AllCarsWithGpsCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  
+                                               Style="{StaticResource TextblockContentOfSquare}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding AllGpsCarsString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                               Style="{StaticResource TextblockSecondContentOfSquare}" />
+                                </Grid>
+
+                            </Grid>
+                        </Grid>
+
+                        <!-- right site of content (icon) -->
+                        <Grid Grid.Column="1">
+                            <Image Margin="5,20,30,20" Height="100" Width="100"  Stretch="Fill" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border> 
+            
+            
+            
+            <!-- NUMBER OF DRIVERS IN DATABASE -->
+            <Border Grid.Column="2" Grid.Row="0" Style="{StaticResource MainSquareBorder}"  >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADING OF SQUARE -->
+                    <Grid Grid.Row="0" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- blue square -->
+                        <Grid Grid.Column="0">
+                            <Border Style="{StaticResource BlueSquareHeader}"/>
+                        </Grid>
+
+                        <!-- header content -->
+                        <Border Grid.Column="1" Style="{StaticResource HeaderUnderline}" >
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Kierowcy" Margin="7,2,0,0" Style="{StaticResource TextblockMainTitle}"/>
+
+                                <TextBlock Grid.Row="1" Text="Stan liczbowy" Style="{StaticResource TextblockSecondTitle}"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- CONTENT OF SQUARE -->
+                    <Grid Grid.Row="1" Background="Transparent" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- left site of content -->
+                        <Grid Grid.Column="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="{Binding AllActiveDriverCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource TextblockContentOfSquare}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding DriverString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Margin="1,20,0,0" VerticalAlignment="Center" FontSize="22" Style="{StaticResource TextblockSecondContentOfSquare}" />
+                                </Grid>
+
+                            </Grid>
+                        </Grid>
+
+                        <!-- right site of content (icon) -->
+                        <Grid Grid.Column="1">
+                            <Image Margin="5,20,30,20" Height="100" Width="100" Stretch="Fill" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+          
+
+            <!-- 1 big square -->
+            <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Style="{StaticResource MainSquareBorder}"  >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="7*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER OF SQUARE -->
+                    <Grid Grid.Row="0" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- blue square -->
+                        <Grid Grid.Column="0">
+                            <Border Style="{StaticResource BlueSquareHeader}"/>
+                        </Grid>
+
+                        <!-- header content -->
+                        <Border Grid.Column="1" Style="{StaticResource HeaderUnderline}" >
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Badanie techniczne" Margin="7,2,0,0" Style="{StaticResource TextblockMainTitle}"/>
+
+                                <TextBlock Grid.Row="1" Text="Najbliższe terminy" Style="{StaticResource TextblockSecondTitle}"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- CONTENT OF SQUARE -->
+                    <Grid Grid.Row="1" Background="Transparent" >
+
+                        <ListView x:Name="testowalista" Margin="0,20,0,10" Width="350" FontSize="14" ItemsSource="{Binding NearestTechnicalInspectionDateCarsList}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="POJAZD" Width="auto" DisplayMemberBinding="{Binding RegNum}"/>
+                                    <GridViewColumn Header="PRACOWNIK" Width="auto" DisplayMemberBinding="{Binding Owner}"/>
+                                    <GridViewColumn Header="DATA" Width="auto" DisplayMemberBinding="{Binding TechnicalInspectionDate}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                       
+                    </Grid>
+                </Grid>
+
+               
+            </Border>
+
+            <!-- 2 big square -->
+            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Style="{StaticResource MainSquareBorder}"  >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="7*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADING OF SQUARE -->
+                    <Grid Grid.Row="0" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- blue square -->
+                        <Grid Grid.Column="0">
+                            <Border Style="{StaticResource BlueSquareHeader}"/>
+                        </Grid>
+
+                        <!-- header content -->
+                        <Border Grid.Column="1" Style="{StaticResource HeaderUnderline}" >
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Przebieg" Margin="7,2,0,0" Style="{StaticResource TextblockMainTitle}"/>
+
+                                <TextBlock Grid.Row="1" Text="Ostatni miesiąc" Style="{StaticResource TextblockSecondTitle}"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+
+                    <!-- CONTENT OF SQUARE -->
+                    <Grid Grid.Row="1" Background="Transparent" >
+
+                        <ListView x:Name="testowalista2" Margin="0,20,0,10" Width="350" FontSize="14" >
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="POJAZD" Width="auto" DisplayMemberBinding="{Binding RegNum}"/>
+                                    <GridViewColumn Header="PRACOWNIK" Width="auto" DisplayMemberBinding="{Binding Name}"/>                                  
+                                    <GridViewColumn Header="PRZEBIEG" Width="auto" DisplayMemberBinding="{Binding Mileage}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+
+                    </Grid>
+
+                </Grid>
+
+            </Border> 
+            
+            <!-- 3 big square -->
+            <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Style="{StaticResource MainSquareBorder}"  />
+
+
+
+
+        </Grid>
+
+    </Grid>
+</Page>

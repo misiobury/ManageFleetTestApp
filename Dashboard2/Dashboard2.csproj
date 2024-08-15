@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Model\Infrastructure\Repositories\**" />
+    <EmbeddedResource Remove="Model\Infrastructure\Repositories\**" />
+    <None Remove="Model\Infrastructure\Repositories\**" />
+    <Page Remove="Model\Infrastructure\Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="View\Start\419-4193000_car-icons-above-small-car-icon-from-above.png" />
+    <None Remove="View\Start\Resources\Drivers_btn_Active.png" />
+    <None Remove="View\Start\Resources\Drivers_btn_NonActive.png" />
+    <None Remove="View\Start\Resources\Exit_btn_NonActive.png" />
+    <None Remove="View\Start\Resources\Fleet_btn_Active.png" />
+    <None Remove="View\Start\Resources\Fleet_btn_NonActive.png" />
+    <None Remove="View\Start\Resources\Home_btn_Active.png" />
+    <None Remove="View\Start\Resources\Home_btn_NonActive.png" />
+    <None Remove="View\Start\Resources\Main_Program_Logo.png" />
+    <None Remove="View\Start\Resources\Settings_btn_Active.png" />
+    <None Remove="View\Start\Resources\Settings_btn_NonActive.png" />
+    <None Remove="View\Start\Resources\Statistics_btn_Active.png" />
+    <None Remove="View\Start\Resources\Statistics_btn_NonActive.png" />
+    <None Remove="View\Start\Resources\Viasat_btn_Active.png" />
+    <None Remove="View\Start\Resources\Viasat_btn_NonActive.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="5.0.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="View\Start\Resources\Drivers_btn_Active.png" />
+    <Resource Include="View\Start\Resources\Drivers_btn_NonActive.png" />
+    <Resource Include="View\Start\Resources\Exit_btn_NonActive.png" />
+    <Resource Include="View\Start\Resources\Fleet_btn_Active.png" />
+    <Resource Include="View\Start\Resources\Fleet_btn_NonActive.png" />
+    <Resource Include="View\Start\Resources\Home_btn_Active.png" />
+    <Resource Include="View\Start\Resources\Home_btn_NonActive.png" />
+    <Resource Include="View\Start\Resources\Main_Program_Logo.png" />
+    <Resource Include="View\Start\Resources\Settings_btn_Active.png" />
+    <Resource Include="View\Start\Resources\Settings_btn_NonActive.png" />
+    <Resource Include="View\Start\Resources\Statistics_btn_Active.png" />
+    <Resource Include="View\Start\Resources\Statistics_btn_NonActive.png" />
+    <Resource Include="View\Start\Resources\Viasat_btn_Active.png" />
+    <Resource Include="View\Start\Resources\Viasat_btn_NonActive.png" />
+  </ItemGroup>
+
+</Project>

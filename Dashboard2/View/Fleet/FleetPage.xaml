@@ -1,0 +1,182 @@
+﻿<Page x:Class="Dashboard2.View.Fleet.FleetPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:local="clr-namespace:Dashboard2.View.Fleet"
+      xmlns:local1="clr-namespace:Dashboard2.ViewModel"
+      mc:Ignorable="d" 
+       d:DesignHeight="800" d:DesignWidth="1230"   
+      Title="FleetPage"
+      x:Name="stronafloty"
+       Background="#EDF2FF"
+    >
+<!--
+    <Page.DataContext>
+        <local1:FleetViewModel/>
+    </Page.DataContext>
+-->
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="7*"/>           
+        </Grid.RowDefinitions>
+
+        <!-- PAGE TITLE -->
+        <TextBlock Grid.Row="0" Style="{DynamicResource PageTitleTextBlock}" Text="{Binding PageTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+        
+        <Button x:Name="AddNewCarBtn" Grid.Row="0" Style="{StaticResource AddButton}"  >
+            <StackPanel Orientation="Horizontal">
+                <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="11" Height="11" Margin="3,3,7,3" />
+                <TextBlock Text="Dodaj Nowe Auto"/>
+            </StackPanel>
+        </Button>
+
+
+        <!-- SEPARATOR -->
+        <Separator Grid.Row="1" Height="1" Background="Transparent" Margin="0,-1,0,10"/>
+
+
+        <!-- TAB BUTTONS -->
+        <Border Grid.Row="2" BorderBrush="White" BorderThickness="0 0 0 2">
+            <StackPanel  Orientation="Horizontal" Margin="0,10,0,0">
+                <Button x:Name="GeneralSectionBtn" Content="Ogólne"  Style="{StaticResource GeneralSectionBtnStyle}" Command="{Binding GeneralTabBtnClicked}"/>
+                <Button x:Name="TankSectionBtn" Content="Tankowanie" Style="{StaticResource TankSectionBtnStyle}" Command="{Binding TankTabBtnClicked}" />
+                <Button x:Name="ServiceSectionBtn" Content="Serwis" Style="{StaticResource ServiceSectionBtnStyle}" Command="{Binding ServiceTabBtnClicked}"/>
+                <Button x:Name="BuySellSectionBtn" Content="Zakup/Sprzedaż" Style="{StaticResource BuySellSectionBtnStyle}" Command="{Binding BuySellTabBtnClicked}" />
+            </StackPanel>
+        </Border>
+        
+
+        <!-- FILTER SECTION -->
+        <StackPanel  Grid.Row="3" HorizontalAlignment="Left" Orientation="Horizontal">
+            <TextBlock Text="Znaleziono " MinWidth="40" FontSize="18" FontWeight="SemiBold" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Left"  />
+            <TextBlock  Text="{ Binding CountOfCars, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18"
+                         FontWeight="SemiBold" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Black"/>
+            <TextBlock Text=" aut w bazie" MinWidth="40" FontSize="18" FontWeight="SemiBold" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Left"  />
+        </StackPanel>
+        <TextBlock x:Name="TB" Grid.Row="3" Text="Filtruj"  FontSize="12" Margin="0 0 215 0" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="Black"/>
+        <CheckBox Grid.Row="3"  Style="{DynamicResource CheckBoxOwnStyle}" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                  Foreground="#2D53DA" FontSize="14" IsChecked="True"  Command="{Binding ActiveNonActiveToggleBtnClicked}" >Na statnie</CheckBox>
+        <!-- textblock SEARCH   -->
+        <Grid x:Name="gridsearch"  Width="200" Grid.Row="3" HorizontalAlignment="Right">           
+            <TextBox x:Name="txtFilter"  Style="{DynamicResource TextBoxSearch}" 
+                     Text="{Binding FilterString,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Icon:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="#b0b9c6" HorizontalAlignment="Right"/>
+        </Grid>
+     
+        
+        <!-- =============================== -->
+        <!--    MAIN TABLE (non sold cars)   -->
+        <!-- =============================== -->
+
+        <!-- GENERAL SECTION -->
+        <DataGrid  Grid.Row="4" Style="{DynamicResource GeneralSectionForActiveCars}" CellStyle="{DynamicResource DataGridCellStyle1}" 
+                   ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                   RowStyle="{DynamicResource DataGridRowStyle1}" 
+                   ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
+                 x:Name="GeneralSectionForActiveCars"  >
+            <DataGrid.Columns>
+                <DataGridTextColumn  Header="VIN" IsReadOnly="True" Binding="{Binding Vin}" Width="Auto"/>
+                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
+                <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
+                <DataGridTextColumn Header="Rodzaj" IsReadOnly="True" Binding="{Binding CarType}" Width="Auto"/>
+                <DataGridTextColumn Header="Kierowca" IsReadOnly="True"  Binding="{Binding Driver}"  Width="Auto" />
+                <DataGridTextColumn Header="Oddział" IsReadOnly="True" Binding="{Binding BranchName}" Width="Auto" />
+                <DataGridTextColumn Header="Własny" IsReadOnly="True" Binding="{Binding CompanyOwn}" Width="Auto"/>
+                <DataGridTextColumn Header="GPS" IsReadOnly="True" Binding="{Binding GpsMonitoring}" Width="Auto"  />
+            </DataGrid.Columns>
+        </DataGrid>
+
+
+        <!-- TANK SECTION -->
+        <DataGrid Grid.Row="4" Style="{DynamicResource TankSectionForActiveCars}" CellStyle="{DynamicResource DataGridCellStyle1}" 
+                  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                   RowStyle="{DynamicResource DataGridRowStyle1}" ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
+                 x:Name="AllCarsTankTableForActiveCars"   >
+            <DataGrid.Columns>                
+                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
+                <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
+                <DataGridTextColumn Header="Kierowca" IsReadOnly="True" Binding="{Binding Driver}" Width="Auto" />               
+                <DataGridTextColumn Header="Rodzaj Paliwa" IsReadOnly="True" Binding="{Binding FuelType }" Width="*"/>            
+                <DataGridTextColumn Header="Pojemność baku" IsReadOnly="True" Binding="{Binding FuelTankCapasity}" Width="*" />
+                <DataGridTextColumn Header="Zużycie paliwa" IsReadOnly="True" Binding="{Binding  FuelConsumptionPer100}" Width="*"/>
+                <DataGridTextColumn Header="Nr karty Orlen" IsReadOnly="True" Binding="{Binding OrlenTankCard }" Width="*"/>
+                <DataGridTextColumn Header="Nr karty BP" IsReadOnly="True" Binding="{Binding OrlenTankCard }" Width="*"/>
+                <DataGridTextColumn Header="kod PIN" IsReadOnly="True" Binding="{Binding PinCode}" Width="Auto"/>               
+            </DataGrid.Columns>
+        </DataGrid>
+
+
+        <!-- SERVICE SECTION -->
+        <DataGrid Grid.Row="4" Style="{DynamicResource ServiceSectionForActiveCars}" CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+            RowStyle="{DynamicResource DataGridRowStyle1}" ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
+          x:Name="AllCarsServiceTableForActiveCars"   >
+            <DataGrid.Columns>           
+                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
+                <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
+                <DataGridTextColumn Header="Kierowca" IsReadOnly="True" Binding="{Binding Driver}" Width="Auto" />
+                <DataGridTextColumn Header="Badanie techniczne" IsReadOnly="True" Binding="{Binding TechnicalInspectionDate }" Width="*"/>
+                <DataGridTextColumn Header="Wymiana rozrządu" IsReadOnly="True" Binding="{Binding NextTimingBeltReplacement}" Width="*" />
+                <DataGridTextColumn Header="Wymiana oleju" IsReadOnly="True" Binding="{Binding  NextOilChange }" Width="*"/>
+                <DataGridTextColumn Header="Rozmiar opon" IsReadOnly="True" Binding="{Binding TiresSize }" Width="*"/>
+                <DataGridTextColumn Header="Opony zimowe" IsReadOnly="True" Binding="{Binding WinterTires }" Width="*"/>
+                <DataGridTextColumn Header="Kosz transportu" IsReadOnly="True" Binding="{Binding TransportCost}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!-- BUY/SELL SECTION -->
+        <DataGrid Grid.Row="4" Style="{DynamicResource BuySellSectionForActiveCars}" CellStyle="{DynamicResource DataGridCellStyle1}" 
+                  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+            RowStyle="{DynamicResource DataGridRowStyle1}" ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
+          x:Name="AllCarsBuySellTableForActiveCars"  >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
+                <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
+                <DataGridTextColumn Header="Kierowca" IsReadOnly="True" Binding="{Binding Driver}" Width="Auto"/>
+                <DataGridTextColumn Header="Rok Produkcji" IsReadOnly="True" Binding="{Binding ProdDate }" Width="Auto"/>
+                <DataGridTextColumn Header="Data 1 rej" IsReadOnly="True" Binding="{Binding FirstRegDate}" Width="Auto" />
+                <DataGridTextColumn Header="Data Zakupu" IsReadOnly="True" Binding="{Binding  PurchaseDate}" Width="Auto"/>               
+                <DataGridTextColumn Header="Cena Zakupu" IsReadOnly="True" Binding="{Binding PurchasePrice }" Width="Auto"/>
+               
+            </DataGrid.Columns>
+        </DataGrid>
+
+        
+        
+        
+        <!-- =============================== -->
+        <!--      MAIN TABLE (sold cars)     -->
+        <!-- =============================== -->
+        
+        <!-- GENERAL SECTION -->
+        <DataGrid  Grid.Row="4" Style="{DynamicResource GeneralSectionForNonActiveCars}" CellStyle="{DynamicResource DataGridCellStyle1}" 
+           ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+           RowStyle="{DynamicResource DataGridRowStyle1}" 
+           ItemsSource="{Binding  AllNonActiveCarsList}" Margin="10,10,0,10"  
+         x:Name="AllNonActiveCarsGeneralTable"  >
+            <DataGrid.Columns>               
+                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
+                <DataGridTextColumn  Header="VIN" IsReadOnly="True" Binding="{Binding Vin}" Width="Auto"/>
+                <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
+                <DataGridTextColumn Header="Rodzaj" IsReadOnly="True" Binding="{Binding CarType}" Width="Auto"/>
+                <DataGridTextColumn Header="Rodzaj Paliwa" IsReadOnly="True" Binding="{Binding FuelType }" Width="Auto"/>
+                <DataGridTextColumn Header="Oddział" IsReadOnly="True" Binding="{Binding BranchName}" Width="Auto" />              
+                <DataGridTextColumn Header="Rok Prod" IsReadOnly="True" Binding="{Binding ProdDate}" Width="Auto"  />
+                <DataGridTextColumn Header="Data zakupu" IsReadOnly="True"  Binding="{Binding PurchaseDate}"  Width="Auto" />
+                <DataGridTextColumn Header="Data 1 rej." IsReadOnly="True"  Binding="{Binding FirstRegDate}"  Width="Auto" />
+                <DataGridTextColumn Header="Cena zakupu" IsReadOnly="True"  Binding="{Binding PurchasePrice}"  Width="Auto" />
+                <DataGridTextColumn Header="Własny" IsReadOnly="True" Binding="{Binding CompanyOwn}" Width="Auto"/>
+                <DataGridTextColumn Header="Data wycofania" IsReadOnly="True" Binding="{Binding VehicleWithdrawalDate}" Width="Auto"/>
+                <DataGridTextColumn Header="Kom wycofania" IsReadOnly="True" Binding="{Binding VehicleWithdrawalComment}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+
+
+    </Grid>
+</Page>

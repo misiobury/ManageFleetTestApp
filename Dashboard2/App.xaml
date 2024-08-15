@@ -1,0 +1,960 @@
+﻿<Application x:Class="Dashboard2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Icon ="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:Dashboard2"
+             xmlns:local2="clr-namespace:Dashboard2.ViewModel"      
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
+             ShutdownMode="OnMainWindowClose"
+ > 
+    
+    <Application.Resources>
+
+  <!--   StartupUri=".\View\MainWindow.xaml"  -->
+        <!--*********************************** MAIN GRID *******************************************************-->
+
+        <!-- TOP BUTTONS -->
+        <Style x:Key="topButton" TargetType="Button">            
+            <Setter Property="Foreground" Value="#6e7783"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="50" BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Gray"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- ============================================================= -->
+        <!--                     ADDED STYLE                               -->
+        <!-- ============================================================= -->
+
+        <!-- DATAGRID STYLE  (FOR ALL TABLES) -->
+        <SolidColorBrush x:Key="{x:Static DataGrid.FocusBorderBrushKey}" Color="#FF000000"/>
+
+        <Style x:Key="{ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+
+                            <Rectangle x:Name="Border" Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" SnapsToDevicePixels="True"/>
+                            <Polygon x:Name="Arrow" Fill="Black" HorizontalAlignment="Right" Margin="8,8,3,3" Opacity="0.15" Points="0,10 10,10 10,0" Stretch="Uniform" VerticalAlignment="Bottom"/>
+
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Stroke" TargetName="Border" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Fill" TargetName="Border" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Visibility" TargetName="Arrow" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="DataGridStyle1" TargetType="{x:Type DataGrid}">
+            <Setter Property="Background" Value="#EDF2FF"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#FF688CAF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="Margin" Value="0 10 0 0"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="ColumnWidth" Value="*"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGrid}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
+                                <ScrollViewer.Template>
+                                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Button Command="{x:Static DataGrid.SelectAllCommand}" Focusable="false" Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}}" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Width="{Binding CellsPanelHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                            <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter" Grid.Column="1" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" Grid.ColumnSpan="2" Grid.Row="1"/>
+                                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="2" Maximum="{TemplateBinding ScrollableHeight}" Orientation="Vertical" Grid.Row="1" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                            <Grid Grid.Column="1" Grid.Row="2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="{Binding NonFrozenColumnsViewportHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Column="1" Maximum="{TemplateBinding ScrollableWidth}" Orientation="Horizontal" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                                            </Grid>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ScrollViewer.Template>
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsGrouping" Value="true"/>
+                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="DataGridCellStyle1" TargetType="{x:Type DataGridCell}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Margin" Value="15 0"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0" SnapsToDevicePixels="True">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+
+        <Style x:Key="ColumnHeaderGripperStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="SizeWE"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="DataGridColumnHeaderStyle1" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background"  Value="Transparent"/>
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="Margin" Value="15 0 15 10"/>
+            <Setter Property="FontSize" Value="15"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <theme:DataGridHeaderBorder Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" IsPressed="{TemplateBinding IsPressed}" IsHovered="{TemplateBinding IsMouseOver}" IsClickable="{TemplateBinding CanUserSort}" Padding="{TemplateBinding Padding}" SortDirection="{TemplateBinding SortDirection}" SeparatorVisibility="{TemplateBinding SeparatorVisibility}" SeparatorBrush="{TemplateBinding SeparatorBrush}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </theme:DataGridHeaderBorder>
+                            <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="DataGridRowStyle1" TargetType="{x:Type DataGridRow}">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="0 4 0 0"/>
+            <Setter Property="FontSize" Value="12"/>
+
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+            <Setter Property="ValidationErrorTemplate">
+
+                <Setter.Value>
+                    <ControlTemplate>
+                        <TextBlock Foreground="Red" Margin="2,0,0,0" Text="!" VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridRow}">
+                        <Border x:Name="DGR_Border" Padding="0 8" Background="{TemplateBinding Background}"  BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
+                            <SelectiveScrollingGrid>
+                                <SelectiveScrollingGrid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </SelectiveScrollingGrid.ColumnDefinitions>
+                                <SelectiveScrollingGrid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </SelectiveScrollingGrid.RowDefinitions>
+                                <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                <DataGridDetailsPresenter Grid.Column="1" Grid.Row="1" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Visibility="{TemplateBinding DetailsVisibility}"/>
+                                <DataGridRowHeader Grid.RowSpan="2" SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                            </SelectiveScrollingGrid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger  Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2D53DA"/>
+                    <Setter Property="Foreground" Value="#EDF2FF"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#2D53DA"/>
+                    <Setter Property="Foreground" Value="#EDF2FF"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="Selector.IsSelectionActive" Value=" false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="LightGray"/>
+
+
+                </MultiTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- DATAGRID STYLE (FLEET PAGE - IN-USE CARS) -->
+        <Style x:Key="GeneralSectionForActiveCars" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGridStyle1}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsGeneralTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                        <Condition Binding="{Binding IsActiveCarsBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TankSectionForActiveCars" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGridStyle1}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsTankTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                        <Condition Binding="{Binding IsActiveCarsBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ServiceSectionForActiveCars" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGridStyle1}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsServiceTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                        <Condition Binding="{Binding IsActiveCarsBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BuySellSectionForActiveCars" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGridStyle1}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsBuySellTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                        <Condition Binding="{Binding IsActiveCarsBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- DATAGRID STYLE (FLEET PAGE - NON IN-USE CARS) -->
+        <Style x:Key="GeneralSectionForNonActiveCars" TargetType="{x:Type DataGrid}" BasedOn="{StaticResource DataGridStyle1}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsGeneralTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True"/>
+                        <Condition Binding="{Binding IsActiveCarsBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Visibility" Value="Visible"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+
+
+        <!-- START PAGE SQUARES -->
+        <Style x:Key="MainSquareBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Margin" Value="13"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <Style x:Key="BlueSquareHeader" TargetType="Border">
+            <Setter Property="Background" Value="#2D53DA"/>
+            <Setter Property="Margin" Value="6,1,0,0"/>
+            <Setter Property="BorderThickness" Value="13"/>
+            <Setter Property="CornerRadius" Value="12"/>
+        </Style>
+
+        <Style x:Key="HeaderUnderline" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="0,0,0,3"/>
+            <Setter Property="Margin" Value="0,0,20,0"/>
+        </Style>
+
+        <Style x:Key="TextblockMainTitle" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="7,3,20,0"/>
+            <Setter Property="FontSize" Value="25"/>
+
+        </Style>
+
+        <Style x:Key="TextblockSecondTitle" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="8,0,10,0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+
+        </Style>
+
+        <Style x:Key="TextblockContentOfSquare" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="26,1,1,19"/>
+            <Setter Property="FontSize" Value="60"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+           
+        </Style>
+
+        <Style x:Key="TextblockSecondContentOfSquare" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="8,20,0,0"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+
+
+
+        <!-- TOGGLE BUTTON (FLEET PAGE) -->
+        <Style x:Key="CheckBoxOwnStyle" TargetType="{x:Type CheckBox}" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid >
+                                <Border Width="45" Height="20" Background="LightGray" CornerRadius="10" Margin="5,0"></Border>
+                                <Border x:Name="button" Height="25" Width="25" CornerRadius="12.5" HorizontalAlignment="Left"  ></Border>
+                            </Grid>
+                            <ContentPresenter x:Name="content" Margin="10,0,0,0" Content="{TemplateBinding Content}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Resources>
+                            <Storyboard x:Key="right">
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" Storyboard.TargetName="button" Duration="0:0:0.4" From="0,0,0,0" To="28,0,0,0" >
+                                    <ThicknessAnimation.EasingFunction>
+                                        <CircleEase EasingMode="EaseOut"/>
+                                    </ThicknessAnimation.EasingFunction>
+                                </ThicknessAnimation>
+                            </Storyboard>
+                            <Storyboard x:Key="left">
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin" Storyboard.TargetName="button" Duration="0:0:0.4" From="28,0,0,0" To="0,0,0,0" >
+                                    <ThicknessAnimation.EasingFunction>
+                                        <CircleEase EasingMode="EaseOut"/>
+                                    </ThicknessAnimation.EasingFunction>
+                                </ThicknessAnimation>
+                            </Storyboard>
+                        </ControlTemplate.Resources>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+
+                            <Trigger Property="IsChecked" Value="true">
+                                <Trigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="rightt"></RemoveStoryboard>
+                                    <BeginStoryboard Storyboard="{StaticResource left}" x:Name="leftt" ></BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="button" Property="Background" Value="#2D53DA"></Setter>
+                            </Trigger>
+
+                            <Trigger Property="IsChecked" Value="false">
+                                <Trigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="leftt"></RemoveStoryboard>
+                                    <BeginStoryboard Storyboard="{StaticResource right}" x:Name="rightt" ></BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter TargetName="button" Property="Background" Value="#757575"></Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+
+
+        <!-- ============================================================= -->
+        <!--                       MAIN MENU                               -->
+        <!-- ============================================================= -->
+        
+        <!-- BORDER BTN MAIN MENU-->
+        <Style x:Key="BorderMenuButton" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="15"/>
+
+        </Style>
+
+        <Style x:Key="BorderStartBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StartPage">
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="Border.IsMouseOver" Value="True" >
+                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+         <Style x:Key="BorderViasatBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="ViasatPage">
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="Border.IsMouseOver" Value="True" >
+                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="BorderFleetBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="FleetPage">
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="Border.IsMouseOver" Value="True" >
+                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="BorderDriversBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="DriversPage">
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="Border.IsMouseOver" Value="True" >
+                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BorderStatisticsBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StatisticsPage">
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="Border.IsMouseOver" Value="True" >
+                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="BorderSettingsBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="SettingsPage">
+                    <Setter Property="Background" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="Border.IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="Background" Value="SkyBlue"/>
+                </Trigger>      
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ExitButtonBorder" TargetType="Border">
+            <Setter Property="Background" Value="DeepSkyBlue"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True" >
+                    <Setter Property="Background" Value="#1DCEF5" />
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+                
+
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- BUTTON MAIN MENU -->
+        <Style x:Key="MainMenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />            
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="DockPanel.Dock" Value="Top"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>           
+        </Style>
+
+        <Style x:Key="MainMenuExitButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="DockPanel.Dock" Value="Bottom"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+      
+        <!-- TEXT BLOCK IN MAIN MENU BTN  -->
+        <Style x:Key="MainMenuBtnTextBlock" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Bahnschrift SemiLight"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="15"/>
+        </Style>
+        
+
+        <Style x:Key="StartBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StartPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>                   
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        
+        <Style x:Key="ViasatBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+            <Style.Triggers>
+                        <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="ViasatPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        
+        <Style x:Key="FleetBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="FleetPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+         <Style x:Key="DriversBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="DriversPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="StatisticsBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StatisticsPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+         <Style x:Key="SettingsBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="SettingsPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        
+        <Style x:Key="HomeBtnMainMenuIcon" TargetType="Icon:PackIconUnicons">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StartPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ViasatBtnMainMenuIcon" TargetType="Icon:PackIconMaterial">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="ViasatPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FleetBtnMainMenuIcon" TargetType="Icon:PackIconFontisto">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="FleetPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="DriversBtnMainMenuIcon" TargetType="Icon:PackIconBootstrapIcons">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="DriversPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="StatisticsBtnMainMenuIcon" TargetType="Icon:PackIconForkAwesome">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StatisticsPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="SettingsBtnMainMenuIcon" TargetType="Icon:PackIconVaadinIcons">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="SettingsPage">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </DataTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="ExitBtnMainMenuIcon" TargetType="Icon:PackIconMaterialDesign">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Width" Value="24"/>
+                    <Setter Property="Height" Value="24"/>
+                </Trigger>
+
+            </Style.Triggers>
+        </Style>
+        
+
+        <!-- ============================================================= -->
+        <!--                      PAGES                                    -->
+        <!-- ============================================================= -->
+       
+        <!-- CONTENT PAGE -->
+        <Style x:Key="PageTitleTextBlock" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,20,0,0"/>
+            <Setter Property="FontSize"  Value="32"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+
+       
+               
+
+        <!-- FLEET PAGE -->
+        <Style x:Key="AddButton" TargetType="Button">
+            <Setter Property="Background" Value="#2D53DA"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0 20 0 0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="7" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#ffffff"/>
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TabButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="3 0 3 0"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0 0 0 4" BorderBrush="{TemplateBinding BorderBrush}" 
+                                Padding="10 10 10 10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>              
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+                           
+            </Style.Triggers>              
+        </Style>
+
+        <Style x:Key="GeneralSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsGeneralTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>                   
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TankSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsTankTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>                  
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ServiceSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsServiceTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>                  
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="BuySellSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsBuySellTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>                  
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+        <Style x:Key="TextblockSearch" TargetType="TextBlock">
+            <Setter Property="Text" Value="Wpisz..."/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#b0b9c6"/>
+            <Setter Property="Margin" Value="15 0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Text" Value="cos tam"/>
+                    <Setter Property="Background" Value="Aqua"/>
+                </Trigger>
+
+               
+            </Style.Triggers>
+        </Style> 
+        
+        
+        <Style x:Key="TextBoxSearch" TargetType="TextBox">
+            <Setter Property="Background" Value="#ffffff"/>
+            <Setter Property="Foreground" Value="#b0b9c6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10 7"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBoxBase">
+                        <Border x:Name="border" CornerRadius="7" Background="{TemplateBinding Background}" SnapsToDevicePixels="True"
+                        BorderThickness="1" BorderBrush="#e0e6ed">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Hidden"/>
+                        </Border>                   
+                        
+                    </ControlTemplate>
+                                        
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        
+
+    </Application.Resources>
+</Application>
+
+    
