@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,14 +16,15 @@ using Oracle.ManagedDataAccess.Types;
 
 namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
 {
-    public class CompanyDatabaseDbContext
+    public class CompanyDatabaseDbContext : INotifyPropertyChanged
     {     
         private string _ConnectionString = AppGeneralConfigStaticClass.OracleConnectionString;
         private OracleConnection _OracleConnection = new OracleConnection();
         private ObservableCollection<CarDTOCompanyDb> TempAllCarsFromCompanyDb = new ObservableCollection<CarDTOCompanyDb>();
         private ObservableCollection<Car> AllActiveCarListFromCompanyDb = new ObservableCollection<Car>();
         private ObservableCollection<Car> AllNonActiveCarListFromCompanyDb = new ObservableCollection<Car>();
-           
+        private bool _isConnectionToCompanyDbActive;
+        public bool IsConnectionToCompanyDbActive { get { return _isConnectionToCompanyDbActive; } set { _isConnectionToCompanyDbActive = value; OnPropertyChanged("IsConnectionToCompanyDbActive"); } }
 
 
         //=========================================================================================================================
@@ -30,8 +32,9 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
         //=========================================================================================================================
         public CompanyDatabaseDbContext()
         {
-            InitializeCompanyDbConnection();           
-           InitializeCarListFromCompanyDb();
+            this.IsConnectionToCompanyDbActive = false;
+          //  InitializeCompanyDbConnection();           
+         //  InitializeCarListFromCompanyDb();
 
 
            
@@ -46,7 +49,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
 
   
         //Connecting/disconnecting Methods to Database 
-        private void InitializeCompanyDbConnection()
+        public void InitializeCompanyDbConnection()
         {
           //  OracleConfiguration.SqlNetAllowedLogonVersionClient = OracleAllowedLogonVersionClient.Version11;            
             OracleConfiguration.SqlNetAllowedLogonVersionClient = AppGeneralConfigStaticClass.OracleClientVersionForLoginToDatabase;            
@@ -54,12 +57,15 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
             try
             {
                 this._OracleConnection.Open();
-                MessageBox.Show("Połączono z firmową bazą danych");
+               // MessageBox.Show("Połączono z firmową bazą danych");
+               this.IsConnectionToCompanyDbActive=true;
             }
             catch(Exception ex) 
             {
                 MessageBox.Show("Nieudana próba połączenia z firmową bazą aut\n"+ex.Message);
             }
+
+            InitializeCarListFromCompanyDb();
         }
 
        public void EndCompanyDbConnection()
@@ -67,7 +73,8 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
             try
             {
                 _OracleConnection.Close();
-                MessageBox.Show("Zakończono połączenie z firmową bazą danych");
+                this.IsConnectionToCompanyDbActive=false;
+              //  MessageBox.Show("Zakończono połączenie z firmową bazą danych");
             }
             catch(Exception ex)
             {
@@ -277,6 +284,17 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
         }
 
 
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
     }
 
 

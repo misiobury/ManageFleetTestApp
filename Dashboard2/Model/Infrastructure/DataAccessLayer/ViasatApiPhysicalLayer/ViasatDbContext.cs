@@ -1,16 +1,8 @@
 ﻿using Dashboard2.Model.Domain;
 using Dashboard2.Model.Infrastructure.Repositories.ViasatApi;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Shell;
 using System.Xml;
 
 namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
@@ -22,6 +14,9 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         public ObservableCollection<ViasatClientObject>? CarsIdAndRegnumListFromApi
         { get { return _carsIdAndRegnumListFromApi; } set { _carsIdAndRegnumListFromApi = value; OnPropertyChanged("CarsIdAndRegnumListFromApi"); } }
         private string _SessionId;
+        public string SessionId { get { return _SessionId; } set { _SessionId = value; } }
+        private bool _isConnectionToApiActive;
+        public bool IsConnectionToApiActive { get { return _isConnectionToApiActive; } set { _isConnectionToApiActive = value; OnPropertyChanged("IsConnectionToApiActive"); } }
 
 
 
@@ -30,16 +25,23 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         //=========================================================================================================================   
         public ViasatDbContext()
         {
-           InitializeHttpObject();           
-           LoginUser();
-            Task.Run( () => GetClientObjects());
-          // await GetClientObjects();
+            this.IsConnectionToApiActive = false;
+           InitializeHttpObject();
+         //   MessageBox.Show("utworzono httpobject");
+       
+          // LoginUser();
+          //  MessageBox.Show("po funkcji loginuser()");
+           // View.CommunicationWindow.Message.ShowCommunicationWindow(this.SessionId);
+          //  GetClientObjects();
+          //  MessageBox.Show("glw konstruktor ViasatDbContext\npo funkcji getclientobject()");
+          // Task.Run( ()=>  );
+         //  await GetClientObjects();
 
         }
 
 
 
-
+        
 
         //=======================================================================
         //                   API VIASAT Main Methods
@@ -47,50 +49,55 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
 
         //LoginUser()
         #region LoginUser() - Viasat API function to login to Viasat interface
-        private async void LoginUser()
+        public void LoginUser()
         {
-            string login = AppGeneralConfigStaticClass.ApiLogin;
+              string login = AppGeneralConfigStaticClass.ApiLogin;
             string password =  AppGeneralConfigStaticClass.ApiPassword;
-                       
-            //declaration of universal function (in Httpobject) to send and receive SOAP message: SendAndReceiveHttpRequestNew(string HttpRequestBody, string SOAPAction) 
-                Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.LoginUserTemplate(login, password), "LoginUser");
+             string test = ViasatMethodsTemplateStaticClass.LoginUserTemplate(login, password);
+
+            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(test, "LoginUser");
+            
             try
-            {               
-                string ReceivedSoapBody = await TaskResult.WaitAsync(TimeSpan.FromSeconds(20));
+            {
+                Task.Run(() => TaskResult.WaitAsync(TimeSpan.FromSeconds(10)));
+                var ReceivedSoapBody = TaskResult.Result;
+
                 if (ReceivedSoapBody != null)
                 {                
-                    this._SessionId = GetSessionIdFromSoapBody(ReceivedSoapBody);
-                    View.CommunicationWindow.Message.ShowCommunicationWindow(this._SessionId);
+                   this._SessionId =  GetSessionIdFromSoapBody(ReceivedSoapBody);                 
+                    if(this.SessionId != null && this.SessionId != "0" && this.SessionId!="")
+                    {
+                        this.IsConnectionToApiActive=true;
+                    }
+
                     if (this._SessionId == "0")
                     {
                         MessageBox.Show("Nie udało się zalogować do Api Viasat,\n niepoprawne dane logowania");
-                        //throw new AccessViolationException("Nie udało się zalogować do Api Viasat,\n niepoprawne dane logowania");
-
                     }
                 }               
               
             }
             catch(TimeoutException) { MessageBox.Show("Nie udalo sie polaczyc z Api Viasat\n upłynął czas próby połączenia."); }
             catch(Exception ex) { MessageBox.Show(ex.Message); }
-            
+
+            GetClientObjects();
         }
         #endregion
 
 
         //LogOffSession()
         #region LogOffSession() - Viasat API function to logout from Viasat interface
-        public async Task LogOffSession()
-        {      
-            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.LogOffSessionTemplate(this._SessionId), "LogOffSessionTemplate");
+        public void LogOffSession()
+        {   
+            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.LogOffSessionTemplate(this._SessionId), "LogOffSession");
 
-            string ReceivedSoapBody = await TaskResult.WaitAsync(TimeSpan.FromSeconds(20));
-           
-
-                string LogOffStatus = (GetLogOffStatusFromSoapBody(ReceivedSoapBody));
+            Task.Run(() => TaskResult.WaitAsync(TimeSpan.FromSeconds(20)));
+            string ReceivedSoapBody = TaskResult.Result;
+            string LogOffStatus = (GetLogOffStatusFromSoapBody(ReceivedSoapBody));
 
                 if (LogOffStatus != null)
                 {
-                    MessageBox.Show("Status wylogowania: " + LogOffStatus);
+                   this.IsConnectionToApiActive = false;
                 }
                 else
                 {
@@ -101,92 +108,93 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         #endregion
 
 
-
-      //  Task<ObservableCollection<ViasatClientObject>> TaskGetClient = Task.Run(() => ViasatApiDbContext.GetClientObjects());
-      //  CarsIdAndRegnumListFromApi = TaskGetClient.Result;
-
-
-
-
-
         //GetClientObjects()
         #region  GetClientObjects() - Viasat API function to get list of registration numbers of cars and assigned to them Id Gps-devices
-        private async Task GetClientObjects()
-        {      
-            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.GetClientObjectTemplate(this._SessionId), "GetClientObjects");
-
-            try
+        private void GetClientObjects()
+        {
+           string test = ViasatMethodsTemplateStaticClass.GetClientObjectTemplate(this._SessionId);
+  
+            if (this._HttpObjectForCommunicationWithApi != null)
             {
-                string ReceivedSoapBody = await TaskResult.WaitAsync(TimeSpan.FromSeconds(20));
-              
-               
-               // MessageBox.Show(ReceivedSoapBody);
-                  //  WaitAsync(TimeSpan.FromSeconds(20));
-                if (ReceivedSoapBody != null)
+                Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(test, "GetClientObjects");
+                try
                 {
-                  //  MessageBox.Show("odp liczba znakow: "+ReceivedSoapBody.Count().ToString());
-                    this.CarsIdAndRegnumListFromApi =  GetClientListFromSoapBody(ReceivedSoapBody);
+                    Task.Run(() => TaskResult.WaitAsync(TimeSpan.FromSeconds(10)));
+                    string ReceivedSoapBody = TaskResult.Result;
+                                  
+                    if (ReceivedSoapBody != null)
+                    {
+                        //  MessageBox.Show("odp liczba znakow: "+ReceivedSoapBody.Count().ToString());
+                        this.CarsIdAndRegnumListFromApi = GetClientListFromSoapBody(ReceivedSoapBody);
+                     /*   string test1 = "";
+                        foreach(var el in this.CarsIdAndRegnumListFromApi)
+                        {
+                            test1 += $"{el.Name} - {el.Id}\n";
+                        }
+                        MessageBox.Show(test1);*/
+                     //   MessageBox.Show("metoda GetClientObject()\npobrano aut z odpowiedzi: " + this.CarsIdAndRegnumListFromApi.Count);
+                    }
                 }
-               
+                catch (TimeoutException) { MessageBox.Show("Nie udalo sie uzyskać odpowiedzi z Api\n upłynął czas oczekiwania na odpowiedź."); }
+                catch (Exception ex) { MessageBox.Show(ex.Message); }
             }
-           catch (TimeoutException) { MessageBox.Show("Nie udalo sie uzyskać odpowiedzi z Api\n upłynął czas oczekiwania na odpowiedź."); }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
-
-            
+            else
+                MessageBox.Show("Obiekt Http do komunikacji z API, jest pusty");
         }
         #endregion
 
 
         //GetLocationsExNc()
         #region  GetLocationsExNC() - Viasat API function to get list of time checkpoints for a specific car
-        public  async Task<List<CheckPoint>> GetLocationsExNC(ViasatClientObject SelectedAuto, DateTime StartDate, DateTime EndDate)
-        {
-            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.GetLocationsExNCTemplate(this._SessionId, SelectedAuto.Id,StartDate,EndDate), "GetLocationsExNC");   
-            
+      //  public List<CheckPoint> GetLocationsExNC(ViasatClientObject SelectedAuto, DateTime StartDate, DateTime EndDate)
+        public List<CheckPoint> GetLocationsExNC(DTOForGetLocationsForCar SelectedAuto)
+        {           // MessageBox.Show("jedziemy z tematem!");
+            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.GetLocationsExNCTemplate(this._SessionId, SelectedAuto.Id, SelectedAuto.DateFrom, SelectedAuto.DateTo), "GetLocationsExNC");   
             CheckPoint CheckPoint = new CheckPoint(SelectedAuto.Id, SelectedAuto.Name);
-
             try
             {
-                string ReceivedSoapBody = await TaskResult.WaitAsync(TimeSpan.FromSeconds(20));
+                // Task task1 = Task.Run(async () => await TaskResult.WaitAsync(TimeSpan.FromSeconds(20)));
+                Task.Run(async () => await TaskResult);
+                Task.WaitAll(TaskResult);
+                  //  MessageBox.Show("skonczylem wywolanie taskresult");
+                string ReceivedSoapBody = TaskResult.Result;
 
+                // MessageBox.Show("znowu w glownej funkcji: "+ReceivedSoapBody);
                 if (ReceivedSoapBody != null)
                 {
-                    return await CreateCheckpointsListFromSoapResponse(ReceivedSoapBody, CheckPoint);
+                    // return  CreateCheckpointsListFromSoapResponse(ReceivedSoapBody, CheckPoint, SelectedAuto);
+                    return CreateCheckpointsListFromSoapResponse2(ReceivedSoapBody);
                 }
+                else
+                    return new List<CheckPoint>();
 
             }
             catch (TimeoutException) { MessageBox.Show("Nie udalo sie uzyskać odpowiedzi z Api Viasat\n upłynął czas oczekiwania na odpowiedź."); }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
 
-            return null;
+            return new List<CheckPoint>();
                 
         }
         #endregion
 
+
         //GetDeviceStatisticFlow()
         #region GetDeviceStatisticFlow() Viasat API function to get list of numbers of km's in selected duration for every car
-        public ObservableCollection<ViasatClientObject> GetDeviceStatisticFlow(string dateFrom, string dateTo)
+        public   ObservableCollection<ViasatClientObject> GetDeviceStatisticFlow(string dateFrom, string dateTo)
         {         
             Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.GetDeviceStatisticFlowTemplate(this._SessionId, dateFrom, dateTo), "GetDeviceStatisticFlow");
-            //MessageBox.Show("mam odpowiedz");
             try
             {
-                Task.WaitAll(TaskResult);
-                MessageBox.Show("1. mam odpowiedz z API");
+                Task.Run(() => TaskResult.WaitAsync(TimeSpan.FromSeconds(10)));
                 string ReceivedSoapBody = TaskResult.Result;
-                //  MessageBox.Show("mam odpowiedz z API, ilosc znakow: "+ReceivedSoapBody.Count());
-                MessageBox.Show(ReceivedSoapBody);
+              //  MessageBox.Show(ReceivedSoapBody);
+            
                 if (ReceivedSoapBody != null)
                 {
-                    
-                    var ResultList = GetMileageOfKilometersFromSoapBodyForAllCars(ReceivedSoapBody);
-                   // MessageBox.Show("liczba odczytanych aut z przebiegiem: "+ResultList.Count());
-                    MessageBox.Show("2. pierwszy element w tej liscie: "+ResultList[1].Id+" -> " + ResultList[1].NumberOfKilometres+"!!!");
-                    //var task = GetClientObjects();
-                    
-                    var TempListOfGetClientObjectsMethod = GetClientObjects();
-                    MessageBox.Show("3. lista aut z getclientobject: "+TempListOfGetClientObjectsMethod.Count().ToString());
-                    //MessageBox.Show("rozpoczynam petle");
+                   // MessageBox.Show("1");         
+                    var ResultList = GetMileageOfKilometersFromSoapBodyForAllCars(ReceivedSoapBody);                  
+                    var TempListOfGetClientObjectsMethod = this.CarsIdAndRegnumListFromApi;
+                   
                     if (TempListOfGetClientObjectsMethod != null)
                     {
                         for (int i = 0; i < ResultList.Count; i++)
@@ -200,11 +208,22 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
                                 }
                             }
                         }
-
+/*
+                        string test = "";
+                        foreach(var el in ResultList)
+                        {
+                            test += $"{el.Name} - {el.Id} - {el.NumberOfKilometres}\n";
+                        }
+                        MessageBox.Show(test);
+*/
                         return ResultList;
                     }
                     else
+                    {
+                        MessageBox.Show("TempListOfGetClientObjectsMethod jest null");
                         return ResultList;
+                    }
+                       
                
                 }
 
@@ -268,13 +287,13 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         //LogoffSession()  helper functions
         //===========================================================================================================
         #region  GetLogOffStatusFromSoapBody() -  helper function for function LogOffSession()
-        public string GetLogOffStatusFromSoapBody(string ReceivedSoapBody)
+        private string GetLogOffStatusFromSoapBody(string ReceivedSoapBody)
         {
            // MessageBox.Show(ReceivedSoapBody);
 
             if (ReceivedSoapBody == "" || ReceivedSoapBody == null)
             {
-                MessageBox.Show("Przy próbie uzyskania ID Sessi z odpowiedzi z API Viasat, wiadomość jest pusta");
+                MessageBox.Show("Przy próbie uzyskania ID Sesji z odpowiedzi z API Viasat, wiadomość jest pusta");
                 throw new ArgumentNullException("Przy próbie uzyskania ID Sessi z odpowiedzi z API Viasat, wiadomość jest pusta");
             }
             else
@@ -305,7 +324,8 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         //===========================================================================================================
         #region GetClientListFromSoapBody() - helper function for function GetClientObjects()
         public ObservableCollection<ViasatClientObject> GetClientListFromSoapBody(string xmldoc)
-        {           
+        {
+           // MessageBox.Show(xmldoc);
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmldoc);
 
@@ -326,6 +346,14 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
             {               
                 RegNumList.Add(node.InnerText);
             }
+            /*
+            string test3 = "";
+            foreach(var el in IdDeviceList)
+            {
+                test3 += $"{el}\n";
+            }
+            MessageBox.Show(test3);
+            */
 
             ObservableCollection<ViasatClientObject> ReturnCarList = new ObservableCollection<ViasatClientObject>();
 
@@ -336,7 +364,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
                 ReturnCarList.Add(new ViasatClientObject(IdDeviceList[i], RegNumList[i]));
             }
             //MessageBox.Show(ReturnCarList[4].Name);
-            MessageBox.Show($"el 1 z listy wszystkich nodow: {ReturnCarList[0].Name}  {ReturnCarList[0].Id}");
+           // MessageBox.Show($"el 1 z listy wszystkich nodow: {ReturnCarList[0].Name}  {ReturnCarList[0].Id}");
             return ReturnCarList;
         }
         #endregion
@@ -358,34 +386,79 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
             {
                 IdDeviceList.Add(Node.InnerText);
             }
-           // MessageBox.Show("ilosc nodow z przebiegiem: " + IdDeviceList.Count);
+          //  MessageBox.Show("ilosc nodow z Id device: " + IdDeviceList.Count);
 
             //create list from all ObjectName nodes from Soap body message
             XmlNodeList ObjectNameNodesList = xmlDoc.SelectNodes("//cma:dblDistance", XmlNsManager);
             List<string> MileageList = new List<string>();
             foreach (XmlNode node in ObjectNameNodesList)
             {
-                MileageList.Add(node.InnerText);
+                if(node.InnerText.IndexOf(".") != -1)
+                {
+                    MileageList.Add(node.InnerText.Substring(0, node.InnerText.IndexOf('.')));
+                }
+                else
+                    MileageList.Add("0");
+                
             }
-            MessageBox.Show("ilosc nodow z przebiegiem: " + MileageList.Count);
+          // MessageBox.Show("ilosc nodow z przebiegiem: " + MileageList.Count);
             ObservableCollection<ViasatClientObject> ReturnCarList = new ObservableCollection<ViasatClientObject>();
 
             for (int i = 0; i < IdDeviceList.Count; i++)
             {
                 //Console.WriteLine(IdDeviceList[i].ToString() + " = " + MileageList[i].ToString());
 
-                ReturnCarList.Add(new ViasatClientObject(IdDeviceList[i], MileageList[i]));
+                ReturnCarList.Add(new ViasatClientObject(IdDeviceList[i], null ,MileageList[i]));
             }
             //MessageBox.Show(ReturnCarList[4].Name);
+          //  MessageBox.Show("koniec metody getMileageKilometersfromSoap;\n pierwszy element: " + ReturnCarList[0].Id + " - " + ReturnCarList[0].NumberOfKilometres);
             
             return ReturnCarList;
         }
 
 
+        //GetLocationsExNC()  helper functions
+        //===========================================================================================================
+
+        private List<CheckPoint> CreateCheckpointsListFromSoapResponse2(string ReceivedSoapBody)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(ReceivedSoapBody);
+            
+            List<XmlNodeList> AllNodesListsFoundInXML = GenerateNodesListsFromXML(xmlDoc);
+
+            List<CheckPoint> AllCheckpointsfromXML = new List<CheckPoint>();
+
+            for (int i = 0; i < AllNodesListsFoundInXML[0].Count; i++)
+            {
+                //CreateCheckpointBasedOnXMLNodes() - generate checkpoint from list of all nodes (as parameters such as speed, address etc.) 
+                AllCheckpointsfromXML.Add(CreateCheckpointBasedOnXMLNodes(AllNodesListsFoundInXML, i));
+            }
+
+            return AllCheckpointsfromXML; 
+        
+        }
+
+        private CheckPoint CreateCheckpointBasedOnXMLNodes(List<XmlNodeList> AllNodesListsFoundInXML, int i)
+        {
+            CheckPoint TempTimeCheckPoint = new CheckPoint();
+            return WriteParamToCheckpointFromNodesLists(TempTimeCheckPoint, AllNodesListsFoundInXML, i);
+
+        }
+
+
+
+     
+
+        //======================================================================================================================================================
+        //======================================================================================================================================================
+        //======================================================================================================================================================
+        //======================================================================================================================================================
+
 
         //CreateCheckpointsListFromSoapResponse() 
         #region CreateCheckpointsListFromSoapResponse()
-        public async Task<List<CheckPoint>> CreateCheckpointsListFromSoapResponse(string ReceivedSoapBody, CheckPoint TempCheckpoint)
+        public List<CheckPoint> CreateCheckpointsListFromSoapResponse(string ReceivedSoapBody, CheckPoint TempCheckpoint, DTOForGetLocationsForCar SelectedCar)
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(ReceivedSoapBody);
@@ -407,7 +480,6 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
 
                 if (AllCheckpointsfromXML.Count > 2)
                 {
-
                     CheckPoint T1 = CreateCopyOfCheckPointForWriteToList(AllCheckpointsfromXML[0]);
 
                     ListOfCheckPointsForSummaryOfResult.Add(CreateCopyOfCheckPointForWriteToList(AllCheckpointsfromXML[0]));
@@ -427,10 +499,9 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
                         }
                         else if (CheckIsAddressSameAsPrevious(AllCheckpointsfromXML[T1Index].LocalizationDescription, AllCheckpointsfromXML[T2Index].LocalizationDescription))
                         {
-
                             if (CheckIfBothCheckpointsAreTheSame(AllCheckpointsfromXML[T1Index], AllCheckpointsfromXML[0]))
                             {
-                                int index = CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(T1Index, AllCheckpointsfromXML);
+                                int index = CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(T1Index, AllCheckpointsfromXML, SelectedCar.CarParkTime);
 
                                 if (index > 0)
                                 {
@@ -448,7 +519,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
                             }
                             else
                             {
-                                int index = CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(T2Index, AllCheckpointsfromXML);
+                                int index = CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(T2Index, AllCheckpointsfromXML, SelectedCar.CarParkTime);
                                 if (index > 0)
                                 {
                                     ListOfCheckPointsForSummaryOfResult.Add(CreateCopyOfCheckPointForWriteToList(AllCheckpointsfromXML[T1Index + 1]));
@@ -474,7 +545,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
                             }
                             else if ((CheckIsAddressSameAsPrevious(AllCheckpointsfromXML[T2Index].LocalizationDescription, AllCheckpointsfromXML[T2Index + 1].LocalizationDescription)))
                             {
-                                int index = CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(T2Index, AllCheckpointsfromXML);
+                                int index = CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(T2Index, AllCheckpointsfromXML, SelectedCar.CarParkTime);
                                 if (index > 0)
                                 {
                                     ListOfCheckPointsForSummaryOfResult.Add(CreateCopyOfCheckPointForWriteToList(AllCheckpointsfromXML[T2Index]));
@@ -497,6 +568,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
 
             if (ListOfCheckPointsForSummaryOfResult != null)
             {
+              //  MessageBox.Show($"X: {ListOfCheckPointsForSummaryOfResult[0].X}");
                 return ListOfCheckPointsForSummaryOfResult;
             }
             else
@@ -507,7 +579,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
 
         //CompareCheckpointsEachOtherToFindEndOfPauseOrBrake  - find end checkpoint which is as same as our and compare them is this brake or pause
         #region CompareCheckpointsEachOtherToFindEndOfPauseOrBrake()
-        private int CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(int Index, List<CheckPoint> ChckpointsList)
+        private int CompareCheckpointsEachOtherToFindEndOfPauseOrBrake(int Index, List<CheckPoint> ChckpointsList, int CarParkTime)
         {
             int i = 0;
 
@@ -515,7 +587,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
             {
                 if (!CheckIsAddressSameAsPrevious(ChckpointsList[Index].LocalizationDescription, ChckpointsList[i].LocalizationDescription))
                 {
-                    if (IsThisStopOrPauseBetweenCheckpoints(ChckpointsList[Index], ChckpointsList[i]))
+                    if (IsThisStopOrPauseBetweenCheckpoints(ChckpointsList[Index], ChckpointsList[i], CarParkTime))
                     {
                         return i - 1;
                     }
@@ -536,11 +608,11 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
 
         //IsThisStopOrPauseBetweenCheckpoints() 
         #region IsThisStopOrPauseBetweenCheckpoints() - and return bool
-        private bool IsThisStopOrPauseBetweenCheckpoints(CheckPoint Chckpnt1, CheckPoint Chckpnt2)
+        private bool IsThisStopOrPauseBetweenCheckpoints(CheckPoint Chckpnt1, CheckPoint Chckpnt2, int CarParkTime)
         {
 
-            TimeSpan BreakTime = new TimeSpan(00, 15, 00);
-            if (Chckpnt2.DateTimeReading - Chckpnt1.DateTimeReading > BreakTime)
+            TimeSpan BreakTime = new TimeSpan(00, CarParkTime, 00);
+            if (Chckpnt2.DateTimeReading - Chckpnt1.DateTimeReading >= BreakTime)
             {
                 // Console.WriteLine("roznica czasowa: "+(Chckpnt1.DateTimeReading - Chckpnt2.DateTimeReading));
                 return true;
@@ -570,6 +642,8 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
             CheckPointReceipient.Odometer = CheckPointSource.Odometer;
             CheckPointReceipient.Speed = CheckPointSource.Speed;
             CheckPointReceipient.LocalizationDescription = CheckPointSource.LocalizationDescription;
+            CheckPointReceipient.X = CheckPointSource.X;
+            CheckPointReceipient.Y = CheckPointSource.Y;
         }
         #endregion
 
@@ -668,6 +742,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         }
         #endregion
 
+
         //CreateCheckpointBasedOnXMLNodes() - generate checkpoint from list "AllNodesListsFoundInXML" to save later to list of all checkpoints for specific car
         #region CreateCheckpointBasedOnXMLNodes()
         private CheckPoint CreateCheckpointBasedOnXMLNodes(CheckPoint TempCheckpoint, List<XmlNodeList> AllNodesListsFoundInXML, int i)
@@ -692,9 +767,9 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
 
 
             TempCheckpoint.X = ConvertStrToDouble(AllNodesListsFoundInXML[1].Item(IndexOfListOfListsofAllNodes).InnerText);
-
+          
             TempCheckpoint.Y = ConvertStrToDouble(AllNodesListsFoundInXML[2].Item(IndexOfListOfListsofAllNodes).InnerText);
-
+          //  MessageBox.Show($"X:"+TempCheckpoint.X.ToString()+$"Y: {TempCheckpoint.Y}");
             TempCheckpoint.LocalizationDescription = AllNodesListsFoundInXML[5].Item(IndexOfListOfListsofAllNodes).InnerText;
 
             int.TryParse(AllNodesListsFoundInXML[3].Item(IndexOfListOfListsofAllNodes).InnerText, out int s);

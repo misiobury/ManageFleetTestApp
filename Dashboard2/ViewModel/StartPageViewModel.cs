@@ -98,17 +98,14 @@ namespace Dashboard2.ViewModel
             get { return _allGpsCarsString; }
             set { _allGpsCarsString = value; OnPropertyChanged("AllGpsCarsString"); }
         }
+        private string _lastMonthName;
+        public string LastMonthName { get { return _lastMonthName; } set { _lastMonthName = value; OnPropertyChanged("LastMonthName"); } }
 
 
 
         //===================================================
         //               CONSTRUCTOR
         //===================================================
-        public StartPageViewModel()
-        {
-            this.PageTitle = "StartPage!";
-        }
-
         public StartPageViewModel(ViasatDbContext viasatDbContext, ObservableCollection<Car> AllCarsListFromDb)
         {
             // MessageBox.Show("jestem w konstruktorze startpageVM");
@@ -119,11 +116,13 @@ namespace Dashboard2.ViewModel
                 this.AllCarsList = AllCarsListFromDb;
                 this.ViasatApiDbContext = viasatDbContext;
 
-                SetAllCountsOfValues();
+               Task Task3 = Task.Run(() => SetAllCountsOfValues());
 
-                SetTheNearestTechnicalInspectionDateCarsListOnStartPage();
+                Task Task1 = Task.Run(() => SetTheNearestTechnicalInspectionDateCarsListOnStartPage());
 
-                SetLastMonthMileageForAllCarsTableOnStartPage();
+                Task Task2 = Task.Run(() => SetLastMonthMileageForAllCarsTableOnStartPage());
+                Task.WaitAll(Task1, Task2, Task3);
+              //  MessageBox.Show("koniec StartPageViewModel");
             }
             else
             {
@@ -132,16 +131,13 @@ namespace Dashboard2.ViewModel
                 this.AllCarsWithGpsCount = 0;                
             }
 
-
-/*
-            Task.Run(async () =>
-            {
-                await Task.Delay(10000);
-
-            });
-*/
+         //  MessageBox.Show($"konstruktor StartPageViewModel;\n pierwszy obiekt: {this.LastMonthMileageForAllCars[0].RegNum} - {this.LastMonthMileageForAllCars[0].MileageOfKilometers}");
         }
 
+        public StartPageViewModel()
+        {
+            this.PageTitle = "StartPage!";
+        }
 
 
 
@@ -150,9 +146,39 @@ namespace Dashboard2.ViewModel
         //===================================================
         private void SetAllCountsOfValues()
         {
-            this.AllCarsCount = AllCarsList.Where(x => x.Akt != false).Count();          
-            this.AllCarsWithGpsCount = AllCarsList.Where(x => x.GpsDeviceId != null && x.GpsDeviceId != "").Count();
-            this.AllActiveDriverCount = AllCarsList.Count(x => x.Driver != null && x.Driver != "" && x.Akt == true);
+            Task task1 = Task.Run(() =>
+            {
+                int y = AllCarsList.Where(x => x.Akt != false).Count();
+                for (int i = 0; i < y+1; i++)
+                {
+                    this.AllCarsCount = i;
+                    Thread.Sleep(20);
+                }
+            });
+
+            Task task2 = Task.Run(() =>
+            {
+                int z = AllCarsList.Where(x => x.GpsDeviceId != null && x.GpsDeviceId != "").Count();
+                for (int i = 0; i < z + 1; i++)
+                {
+                    this.AllCarsWithGpsCount = i;
+                    Thread.Sleep(30);
+                }
+            });
+
+            Task task3 = Task.Run(() =>
+            {
+                int a = AllCarsList.Count(x => x.Driver != null && x.Driver != "" && x.Akt == true);
+                for (int i = 0; i < a + 1; i++)
+                {
+                    this.AllActiveDriverCount = i;
+                    Thread.Sleep(40);
+                }
+            });
+             
+            DateTime dateTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);            
+            this.LastMonthName = $"({dateTime.ToString("MMMMMMMMMMMM")})";
+
         }
         private void SetTheNearestTechnicalInspectionDateCarsListOnStartPage()
         {
@@ -189,33 +215,39 @@ namespace Dashboard2.ViewModel
                 DateFrom = $"{PresentYear}-{DateTime.Now.Month - 1}-01";
                 DateTo = $"{PresentYear}-{DateTime.Now.Month - 1}-{DateTime.DaysInMonth(PresentYear, DateTime.Now.Month - 1)}";
             }
-            
-           // MessageBox.Show($"datefrom: {DateFrom}, dateto: {DateTo}");
-            var Task = ViasatApiDbContext.GetDeviceStatisticFlow(DateFrom, DateTo);
-            var TempList = Task.Result;
-           // MessageBox.Show("zakonczylem wywolanie GetDeviceStatisticFlow()");
+
+           // MessageBox.Show($"StartViewModel;\ndatefrom: {DateFrom};  dateto: {DateTo}");
+            // MessageBox.Show($"datefrom: {DateFrom}, dateto: {DateTo}");
+            var TempListMileageFromApi = new ObservableCollection<ViasatClientObject>();
+            Task Task1 = Task.Run(() => { TempListMileageFromApi = new ObservableCollection<ViasatClientObject>(ViasatApiDbContext.GetDeviceStatisticFlow(DateFrom, DateTo).OrderByDescending(x => int.Parse(x.NumberOfKilometres)).ToList());});
+            Task.WaitAll(Task1);
+
+          // TempListMileageFromApi = TempListMileageFromApi.OrderBy(x => int.Parse( x.NumberOfKilometres));
+            //MessageBox.Show($"\n lista z API - liczba el: {TempListMileageFromApi.Count}");
+
+            // MessageBox.Show("zakonczylem wywolanie GetDeviceStatisticFlow()");
             this.LastMonthMileageForAllCars = new ObservableCollection<SimpleCarObjectForStartPage>();
-            if(TempList != null)
+            if(TempListMileageFromApi != null)
             {
-                for(int i=0; i< TempList.Count; i++)
+                for(int i=0; i< TempListMileageFromApi.Count(); i++)
                 {
-                   int index = AllCarsList.IndexOf(AllCarsList.Where(x => x.RegNum == TempList[i].Name).FirstOrDefault());
+                   int index = AllCarsList.IndexOf(AllCarsList.Where(x => x.RegNum == TempListMileageFromApi[i].Name).FirstOrDefault());
                
                     if(index >= 0)
                     {
                         if (AllCarsList[index].Driver != null && AllCarsList[index].Driver != "")
                         {
-                            this.LastMonthMileageForAllCars.Add(new SimpleCarObjectForStartPage(TempList[i].Name, AllCarsList[index].Driver, null, TempList[i].NumberOfKilometres));
+                            this.LastMonthMileageForAllCars.Add(new SimpleCarObjectForStartPage(TempListMileageFromApi[i].Name, AllCarsList[index].Driver, null, TempListMileageFromApi[i].NumberOfKilometres));
                         }
                         else
                         {
-                            this.LastMonthMileageForAllCars.Add(new SimpleCarObjectForStartPage(TempList[i].Name, AllCarsList[index].BranchName, null, TempList[i].NumberOfKilometres));
+                            this.LastMonthMileageForAllCars.Add(new SimpleCarObjectForStartPage(TempListMileageFromApi[i].Name, AllCarsList[index].BranchName, null, TempListMileageFromApi[i].NumberOfKilometres));
 
                         }
                     }
                     else
                     {
-                        this.LastMonthMileageForAllCars.Add(new SimpleCarObjectForStartPage(TempList[i].Name, "brak info", null, TempList[i].NumberOfKilometres));
+                        this.LastMonthMileageForAllCars.Add(new SimpleCarObjectForStartPage(TempListMileageFromApi[i].Name, "brak info", null, TempListMileageFromApi[i].NumberOfKilometres));
                     }
                   
                 }

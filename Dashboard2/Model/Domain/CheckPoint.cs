@@ -13,7 +13,7 @@ namespace Dashboard2.Model.Domain
         private readonly string _IdDevice;
         private readonly string _RegNum;
 
-        private CheckPoint() { }
+        public CheckPoint() { }
         public CheckPoint(string IdDevice, string RegNum)
         {
             _IdDevice = IdDevice;

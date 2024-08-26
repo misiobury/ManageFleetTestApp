@@ -88,7 +88,7 @@
 
                             <!-- right site of content (icon) -->
                         <Grid Grid.Column="1">
-                            <Image Margin="0,10,10,10" Stretch="Fill" />
+                            <Image Margin="0,10,20,10" Source="/View/Start/blue-sports-car-isolated-white-resize.png"     />
                         </Grid>
                         </Grid>
                     </Grid>
@@ -162,7 +162,7 @@
 
                         <!-- right site of content (icon) -->
                         <Grid Grid.Column="1">
-                            <Image Margin="5,20,30,20" Height="100" Width="100"  Stretch="Fill" />
+                            <Image Margin="0,0,0,10" Height="120" Width="150" Source="/View/Start/blue_car_with_GPSresize.png" />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -234,7 +234,7 @@
 
                         <!-- right site of content (icon) -->
                         <Grid Grid.Column="1">
-                            <Image Margin="5,20,30,20" Height="100" Width="100" Stretch="Fill" />
+                            <Image  Margin="0 0 20 10" Height="130" Width="150" Stretch="Fill" Source="/View/Start/blue-sports-car-driver_resizer.png"  />
                         </Grid>
                     </Grid>
                 </Grid>
@@ -325,8 +325,12 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Text="Przebieg" Margin="7,2,0,0" Style="{StaticResource TextblockMainTitle}"/>
-
-                                <TextBlock Grid.Row="1" Text="Ostatni miesiąc" Style="{StaticResource TextblockSecondTitle}"/>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                     <TextBlock Text="Ostatni miesiąc" Style="{StaticResource TextblockSecondTitle}"/>
+                                    <TextBlock HorizontalAlignment="Left" Text="{Binding LastMonthName}" Margin="0" Style="{StaticResource TextblockSecondTitle}"/>
+                                </StackPanel>
+    
+                               
                             </Grid>
                         </Border>
                     </Grid>
@@ -334,13 +338,12 @@
 
                     <!-- CONTENT OF SQUARE -->
                     <Grid Grid.Row="1" Background="Transparent" >
-
-                        <ListView x:Name="testowalista2" Margin="0,20,0,10" Width="350" FontSize="14" >
+                        <ListView x:Name="testowalista2" Margin="0,20,0,10" Width="350" FontSize="14" ItemsSource="{Binding LastMonthMileageForAllCars, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" >
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="POJAZD" Width="auto" DisplayMemberBinding="{Binding RegNum}"/>
-                                    <GridViewColumn Header="PRACOWNIK" Width="auto" DisplayMemberBinding="{Binding Name}"/>                                  
-                                    <GridViewColumn Header="PRZEBIEG" Width="auto" DisplayMemberBinding="{Binding Mileage}"/>
+                                    <GridViewColumn Header="PRACOWNIK" Width="auto" DisplayMemberBinding="{Binding Owner }"/>
+                                    <GridViewColumn Header="PRZEBIEG" Width="auto" DisplayMemberBinding="{Binding MileageOfKilometers}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>

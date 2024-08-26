@@ -59,7 +59,7 @@
                          FontWeight="SemiBold" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Black"/>
             <TextBlock Text=" aut w bazie" MinWidth="40" FontSize="18" FontWeight="SemiBold" FontStyle="Italic" VerticalAlignment="Center" HorizontalAlignment="Left"  />
         </StackPanel>
-        <TextBlock x:Name="TB" Grid.Row="3" Text="Filtruj"  FontSize="12" Margin="0 0 215 0" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="Black"/>
+        <TextBlock x:Name="TB" Grid.Row="3" Text="Szukaj"  FontSize="12" Margin="0 0 215 0" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="Black"/>
         <CheckBox Grid.Row="3"  Style="{DynamicResource CheckBoxOwnStyle}" VerticalAlignment="Center" HorizontalAlignment="Center" 
                   Foreground="#2D53DA" FontSize="14" IsChecked="True"  Command="{Binding ActiveNonActiveToggleBtnClicked}" >Na statnie</CheckBox>
         <!-- textblock SEARCH   -->
@@ -79,7 +79,7 @@
                    ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
                    RowStyle="{DynamicResource DataGridRowStyle1}" 
                    ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
-                 x:Name="GeneralSectionForActiveCars"  >
+                 x:Name="GeneralSectionForActiveCars">
             <DataGrid.Columns>
                 <DataGridTextColumn  Header="VIN" IsReadOnly="True" Binding="{Binding Vin}" Width="Auto"/>
                 <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />

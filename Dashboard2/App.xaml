@@ -375,7 +375,7 @@
 
         <Style x:Key="TextblockSecondTitle" TargetType="TextBlock">
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Margin" Value="8,0,10,0"/>
+            <Setter Property="Margin" Value="8,0,2,0"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="FontStyle" Value="Italic"/>
 
@@ -392,7 +392,7 @@
 
         <Style x:Key="TextblockSecondContentOfSquare" TargetType="TextBlock">
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Margin" Value="8,20,0,0"/>
+            <Setter Property="Margin" Value="2,20,0,0"/>
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontStyle" Value="Italic"/>
@@ -479,7 +479,7 @@
                     <Setter Property="Background" Value="White"/>
                 </DataTrigger>
                 <Trigger Property="Border.IsMouseOver" Value="True" >
-                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Background" Value="CornflowerBlue" />
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
@@ -491,7 +491,7 @@
                     <Setter Property="Background" Value="White"/>
                 </DataTrigger>
                 <Trigger Property="Border.IsMouseOver" Value="True" >
-                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Background" Value="CornflowerBlue" />
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
@@ -503,7 +503,7 @@
                     <Setter Property="Background" Value="White"/>
                 </DataTrigger>
                 <Trigger Property="Border.IsMouseOver" Value="True" >
-                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Background" Value="CornflowerBlue" />
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
@@ -515,7 +515,7 @@
                     <Setter Property="Background" Value="White"/>
                 </DataTrigger>
                 <Trigger Property="Border.IsMouseOver" Value="True" >
-                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Background" Value="CornflowerBlue" />
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
@@ -527,7 +527,7 @@
                     <Setter Property="Background" Value="White"/>
                 </DataTrigger>
                 <Trigger Property="Border.IsMouseOver" Value="True" >
-                    <Setter Property="Background" Value="SkyBlue" />
+                    <Setter Property="Background" Value="CornflowerBlue" />
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
@@ -541,7 +541,7 @@
                 </DataTrigger>
                 <Trigger Property="Border.IsMouseOver" Value="True">
                     <Setter Property="Cursor" Value="Hand"/>
-                    <Setter Property="Background" Value="SkyBlue"/>
+                    <Setter Property="Background" Value="CornflowerBlue"/>
                 </Trigger>      
             </Style.Triggers>
         </Style>
@@ -801,8 +801,54 @@
 
             </Style.Triggers>
         </Style>
-        
 
+
+        <Style x:Key="NotificationText" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Padding" Value="8 4 0 0"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="LimeGreen"/>
+        </Style>
+        
+        
+        <Style x:Key="BorderNotification" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Background" Value="White"/>
+           <!-- <Setter Property="Width" Value="240"/>  -->
+            <Setter Property="MinWidth" Value="250"/>
+            <Setter Property="Padding" Value="3 0 25 0"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0 0 90 0"/>
+            <Setter Property="Visibility" Value="Collapsed"/>            
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path= IsNotificationActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+              
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AcceptIcon" TargetType="Icon:PackIconForkAwesome">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Margin" Value="3 0 0 0"/>
+            <Setter Property="Foreground" Value="LimeGreen"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path= IsAcceptIconActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                    <Setter Property="Visibility" Value="Visible"/>
+
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        
         <!-- ============================================================= -->
         <!--                      PAGES                                    -->
         <!-- ============================================================= -->

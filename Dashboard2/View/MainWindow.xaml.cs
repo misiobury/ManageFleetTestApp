@@ -30,11 +30,12 @@ namespace Dashboard2.View
         //                  FIELDS 
         //===========================================
 
+        /*
         private MenuButton _MenuButton;
         private IconList iconList { get; set; }
         MainViewModel mainViewModel;
       
-      
+      */
 
         //===========================================
         //                   CONSTRUCTOR
@@ -42,30 +43,33 @@ namespace Dashboard2.View
         public MainWindow()
         {
             InitializeComponent();
+            
+            if (!this.IsVisible)
+            {
+                this.Show();
+            }
+
         }
 
+        /*
+         * 
+         * */
 
 
         //=========================================================================================================================
         //                   METHODS
         //=========================================================================================================================
 
-        private void HomeBtn_Click(object sender, RoutedEventArgs e)
-        {
- 
-        }
+      
 
 
 
-        private void SetIconsForButtons(IconList iconList)
-        {    
-        }
-
+      
       
     }
 
 
-
+   /* 
     public class MenuButton
     {
        
@@ -153,4 +157,5 @@ namespace Dashboard2.View
 
         }
     }
+    */
 }

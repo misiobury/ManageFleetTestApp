@@ -2,11 +2,13 @@
 using Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer;
 using Dashboard2.Model.Infrastructure.Repositories.ViasatApi;
 using Dashboard2.ViewModel;
+using GMap.NET;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,92 +20,52 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace Dashboard2.View.Viasat
 {
     public partial class ViasatPage : Page
     {
-        public ObservableCollection<ViasatClientObject> MojaListaAut { get; set; }
-        public ObservableCollection<Car> MojaListaAut2 { get; set; }
-
-        private List<CheckPoint> ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
-        private ObservableCollection<ObservableCollection<string>> ListOfSummaryResultForSelectedCar = new ObservableCollection<ObservableCollection<string>>();
 
 
-        public ViasatViewModel _ViasatViewModel { get; set; }
-        ViasatDbContext _viasatDbContext { get; set; }
+        //  public ViasatViewModel _ViasatViewModel { get; set; }
+        //  ViasatDbContext _viasatDbContext { get; set; }
 
-
+      //  ViasatViewModel x; 
 
         //=========================================================================================================================
         //                   CONSTRUCTOR
         //=========================================================================================================================        
         public ViasatPage()
-        { InitializeComponent(); }
-
-
-        public ViasatPage(ViasatDbContext viasatDbContext)
-        {
-            InitializeComponent();
-
-            this._ViasatViewModel = new ViasatViewModel();
-            this._viasatDbContext = viasatDbContext;
-
-            this.DataContext = _viasatDbContext;
-            this.DataContext = this;
-
-/*
-            Task.WaitAll(Task.Run(async () =>
-            {
-                await GetClientObjectTest();
-            }));
-
-            if (this.MojaListaAut != null || this.MojaListaAut.Count > 0)
-            {
-                //  this.UserGrid.DataContext = this.MojaListaAut2;
-                this.ListOwn.ItemsSource = this.MojaListaAut;
-                // MessageBox.Show(MojaListaAut[3].Id);
-
-            }
-*/
-
-
-
-            // MessageBox.Show("zakonczylem inicjalizacje");
+        {             
+            InitializeComponent();      
         }
 
 
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {        
+            var CurrentDataContext = (ViasatViewModel)this.DataContext;
+            Panel2.Controls.Add(CurrentDataContext.GmapObject.MapObject); 
+        }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        
+        }
+
+
+        /*
         public ViasatPage(ViasatViewModel viasatViewModel)
         {
             InitializeComponent();
+            /*
             this._ViasatViewModel = viasatViewModel;
             this._ViasatViewModel.przypisz();
             this.DataContext = _ViasatViewModel;
+            
         }
 
-
-
-        //=========================================================================================================================
-        //                   Events in GUI
-        //=========================================================================================================================        
-        /*
-
-          private void getSelectedItem(object sender, MouseButtonEventArgs e)
-          {
-              ViasatClientObject clientObject = (ViasatClientObject)this.ListOwn.SelectedItems[0];
-              // System.Windows.MessageBox.Show(clientObject.Name);
-              this.TextblockOwn.Text = clientObject.Name;
-          }
-
-          private void ListOwn_SelectedItem(object sender, RoutedEventArgs e)
-          {
-              // MessageBox.Show("wybrales1: " + this.ListOwn.SelectedItem.ToString());
-              this.TextblockOwn.Text = this.ListOwn.SelectedItem.ToString();
-          }
-
-
-
+   
           //=========================================================================================================================
           //                   API VIASAT Main Methods
           //=========================================================================================================================        
@@ -207,38 +169,6 @@ namespace Dashboard2.View.Viasat
           }
 
 
-          private void ListOwn_SelectionChanged(object sender, SelectionChangedEventArgs e)
-          {
-             // MessageBox.Show("zmieniles wybor");
-              ViasatClientObject clientObject = (ViasatClientObject)this.ListOwn.SelectedItems[0];
-              this.TextblockOwn.Text = clientObject.Name + " " + clientObject.Id;
-          }
-
-
-          private void ButtonOwn_Click(object sender, RoutedEventArgs e)
-          {
-             // MessageBox.Show("kliknales w przycisk");
-              ViasatClientObject clientObject = (ViasatClientObject)this.ListOwn.SelectedItems[0];
-
-                  GetLocationsExNCTest(clientObject);
-
-          }
-
-          private void ButtonOwn_Click_1(object sender, RoutedEventArgs e)
-          {
-              MessageBox.Show("kliknales w przycisk2");
-              ViasatClientObject clientObject = (ViasatClientObject)this.ListOwn.SelectedItems[0];
-              Task.WaitAll(Task.Run(() => {
-                  GetLocationsExNCTest(clientObject);
-
-              }));
-
-              if (this.ListOfCheckPointsForSummaryOfResult != null || this.ListOfCheckPointsForSummaryOfResult.Count > 0)
-              {
-
-                  this.ListCheckpointOwn.ItemsSource = this.ListOfCheckPointsForSummaryOfResult;
-              }
-          }
 
 
 

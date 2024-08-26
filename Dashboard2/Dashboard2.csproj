@@ -6,9 +6,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>	 
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
+		<Using Remove="System.Windows.Forms" />
+	</ItemGroup>
+
+	<ItemGroup>
+	
     <Compile Remove="Model\Infrastructure\Repositories\**" />
     <EmbeddedResource Remove="Model\Infrastructure\Repositories\**" />
     <None Remove="Model\Infrastructure\Repositories\**" />
@@ -17,6 +23,10 @@
 
   <ItemGroup>
     <None Remove="View\Start\419-4193000_car-icons-above-small-car-icon-from-above.png" />
+    <None Remove="View\Start\blue-sports-car-driver_resizer.png" />
+    <None Remove="View\Start\blue-sports-car-isolated-white-resize.png" />
+    <None Remove="View\Start\blue_car_with_GPS.png" />
+    <None Remove="View\Start\blue_car_with_GPSresize.png" />
     <None Remove="View\Start\Resources\Drivers_btn_Active.png" />
     <None Remove="View\Start\Resources\Drivers_btn_NonActive.png" />
     <None Remove="View\Start\Resources\Exit_btn_NonActive.png" />
@@ -31,14 +41,34 @@
     <None Remove="View\Start\Resources\Statistics_btn_NonActive.png" />
     <None Remove="View\Start\Resources\Viasat_btn_Active.png" />
     <None Remove="View\Start\Resources\Viasat_btn_NonActive.png" />
+    <None Remove="View\Start\white_car-removebg-preview.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <COMReference Include="Microsoft.Vbe.Interop.Forms">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>0d452ee1-e08f-101a-852e-02608c4d0bb4</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GMap.NET.Core" Version="2.1.7" />
+    <PackageReference Include="GMap.NET.WinForms" Version="2.1.7" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="5.0.0" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.5.0" />
+    <PackageReference Include="System.Device.Location.Portable" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="View\Start\blue-sports-car-driver_resizer.png" />
+    <Resource Include="View\Start\blue-sports-car-isolated-white-resize.png" />
+    <Resource Include="View\Start\blue_car_with_GPS.png" />
+    <Resource Include="View\Start\blue_car_with_GPSresize.png" />
     <Resource Include="View\Start\Resources\Drivers_btn_Active.png" />
     <Resource Include="View\Start\Resources\Drivers_btn_NonActive.png" />
     <Resource Include="View\Start\Resources\Exit_btn_NonActive.png" />
@@ -53,6 +83,7 @@
     <Resource Include="View\Start\Resources\Statistics_btn_NonActive.png" />
     <Resource Include="View\Start\Resources\Viasat_btn_Active.png" />
     <Resource Include="View\Start\Resources\Viasat_btn_NonActive.png" />
+    <Resource Include="View\Start\white_car-removebg-preview.png" />
   </ItemGroup>
 
 </Project>

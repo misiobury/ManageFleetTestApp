@@ -4,13 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
        xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+       xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+      xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
       xmlns:local="clr-namespace:Dashboard2.View.Viasat"
       mc:Ignorable="d" 
       Title="ViasatPage"
       d:DesignHeight="800" d:DesignWidth="1230">
 
 
-    <Grid Margin="0" Background="#EDF2FF">
+    <Grid Margin="0" Background="#EDF2FF" Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -27,47 +29,122 @@
 
 
         <Canvas>
-            <TextBox x:Name="TextblockOwn" Width="150" Height="40" Canvas.Left="71" Canvas.Top="94" >
-
-            </TextBox>
 
 
-            <Button x:Name="ButtonOwn" Content="Button" Canvas.Left="248" Canvas.Top="104" HorizontalAlignment="Left"
-                        VerticalAlignment="Center"   />
+            <Button x:Name="ButtonOwn" Content=" Pokaż zestawienie " Canvas.Left="442" Canvas.Top="104" HorizontalAlignment="Left"
+                        VerticalAlignment="Center" Command="{Binding ShowSummaryForSelectedCar }">
+              
+            </Button>
 
-            <ListView x:Name="ListCheckpointOwn"  FontSize="12" Height="450" Width="828" 
-                          Canvas.Left="344" Canvas.Top="151" HorizontalAlignment="Left" VerticalAlignment="Center"
-                          ItemsSource="{Binding ListOfSummaryResultForSelectedCar, ElementName=TestElementName}">
+            <!--summary-->
+            <Border Background="Transparent" BorderBrush="#2D53DA" Width="889" Height="526" BorderThickness="2" CornerRadius="20" 
+                    Canvas.Left="336" Canvas.Top="214" HorizontalAlignment="Center" VerticalAlignment="Top"  >
 
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/>
-                        <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Path=Item[1]}" Width="Auto" />
-                        <GridViewColumn Header="Przebieg" DisplayMemberBinding="{Binding Path=Item[2]}" Width="Auto"/>
-                        <GridViewColumn Header="Przybliżony adres" DisplayMemberBinding="{Binding Path=Item[3]}" Width="Auto"/>
+                <Grid >
+                    <ListView x:Name="ListCheckpointOwn"  FontSize="12" Height="484" 
+Canvas.Left="362" Canvas.Top="221" VerticalAlignment="Top" 
+                   ItemsSource="{Binding  ListOfSummaryResultForSelectedCar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="368" Margin="10,16,0,0">
 
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                        <ListView.View>
+                            <GridView>
+                                <!--  <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/> DateTimeReading -->
+                                <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/>
+                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Path=Item[1]}" Width="Auto" />
+                                <GridViewColumn Header="Przybliżony adres" DisplayMemberBinding="{Binding Path=Item[2]}" Width="Auto"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
 
 
-            <ListView  x:Name="ListOwn"  DisplayMemberPath="Name" FontSize="14" Background="AliceBlue"   
-                          Width="304" Height="364" HorizontalAlignment="Left" Canvas.Left="10" Canvas.Top="151" 
-                          VerticalAlignment="Center"  >
+
+                    <!--MAP-->
+                    <Border Width="460" Height="490"  Canvas.Top="211" Canvas.Left="764" CornerRadius="7" BorderThickness="2"
+                    Background="Transparent"  BorderBrush="LightGray" Margin="415,13,10,19">
+
+                        <WindowsFormsHost  x:Name="WFH"  Width="450" Height="480" Canvas.Left="760" Canvas.Top="174" 
+                                   Background="LightGreen" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 0" >
+
+                            <wf:Panel x:Name = "Panel2"    />
+                        </WindowsFormsHost>
+                    </Border>
+                </Grid>
+            </Border>
+            <!--
+            <TabControl Background="Transparent" Visibility="Visible" Height="529" Canvas.Left="389" Canvas.Top="175" Width="799">
+                <TabItem Header="Zestawienie checkpointów">
+                    <Grid Background="Transparent">                       
+                        <ListView x:Name="ListCheckpointOwn"  FontSize="12" Height="450" 
+               Canvas.Left="376" Canvas.Top="160" VerticalAlignment="Top" Margin="0,0,0,0" 
+                                  ItemsSource="{Binding  ListOfSummaryResultForSelectedCar,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/>
+                                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Path=Item[1]}" Width="Auto" />
+                                     <GridViewColumn Header="Przybliżony adres" DisplayMemberBinding="{Binding Path=Item[3]}" Width="Auto"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Mapa" Height="20" VerticalAlignment="Top" >
+                    <Grid >
+ 
+
+                            <WindowsFormsHost x:Name="WFH" HorizontalAlignment="Left"  VerticalAlignment="Top"  Width="750" Height="490"  
+                                              Margin="10" >
+                                <WindowsFormsHost.Child  >
+                                    <wf:Panel x:Name = "Panel2"    />
+                                </WindowsFormsHost.Child >
+                            </WindowsFormsHost>
+                        
+
+                    </Grid>
+                </TabItem>
+            </TabControl>
+-->
+
+            <ListView  x:Name="ListOfAvailableCars"  DisplayMemberPath="Name" FontSize="14" Background="AliceBlue"   
+                          Width="264" Height="364" HorizontalAlignment="Left" Canvas.Left="4" Canvas.Top="237" 
+                          VerticalAlignment="Top" ItemsSource="{Binding ListOfAvailableCars, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       SelectedIndex="{Binding ListOfAvailableCarsSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <ListView.View  >
                     <GridView x:Name="grdTest"  >
-                        <GridViewColumn  Header="RegNum" DisplayMemberBinding="{Binding Name }"  Width="150"/>
-                        <GridViewColumn  Header="Id Device" DisplayMemberBinding="{Binding Id}" Width="140"/>
+                        <GridViewColumn  Header="#" DisplayMemberBinding="{Binding RowNum}"  Width="Auto"/>
+                        <GridViewColumn  Header="Rejestracja" DisplayMemberBinding="{Binding RegNum}"  Width="Auto"/>
+                        <GridViewColumn  Header="Kierowca/Oddział" DisplayMemberBinding="{Binding Owner}" Width="Auto"/>
+                        <GridViewColumn  Header="ID" DisplayMemberBinding="{Binding Id}" Width="Auto"/>
                     </GridView>
                 </ListView.View>
             </ListView>
 
         </Canvas>
+        <DatePicker x:Name="DatePicker" HorizontalAlignment="Left" 
+                    SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10,23,0,0" Grid.Row="4" 
+                    VerticalAlignment="Top" Height="32" Width="138" SelectedDateFormat="Short" AutomationProperties.IsOffscreenBehavior="Onscreen"/>
+
+        <ComboBox Name="HourFrom" ItemsSource="{Binding HourFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectedIndex="{Binding HourFromSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  HorizontalAlignment="Left" Margin="164,28,0,0" Grid.Row="4" VerticalAlignment="Top" Width="50"/>
+        <ComboBox Name="MinutesFrom" ItemsSource="{Binding MinutesFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectedIndex="{Binding MinuteFromSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  HorizontalAlignment="Left" Margin="238,28,0,0" Grid.Row="4" VerticalAlignment="Top" Width="52"/>
+        <ComboBox Name="HourTo" ItemsSource="{Binding HourToList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedIndex="{Binding HourToSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="164,94,0,0" Grid.Row="4" VerticalAlignment="Top" Width="50"/>
+        <ComboBox Name="MinutesTo" ItemsSource="{Binding MinutesToList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectedIndex="{Binding MinuteToSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="239,94,0,0" Grid.Row="4" VerticalAlignment="Top" Width="51"/>
+        <ComboBox Name="CarMinParkingTime" ItemsSource="{Binding CarMinParkingTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedIndex="{Binding  CarParkTimeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="323,28,0,0" Grid.Row="4" VerticalAlignment="Top" Width="78"/>
+
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="{Binding countOfGpsCars, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,547,0,0" 
+                   Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Height="42" Width="103" Background="LightGreen"/>
+        <TextBlock HorizontalAlignment="Left" FontSize="20" Text="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="978,17,0,0" 
+            Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Height="42" Width="173" Background="LightGreen"/>
 
     </Grid>
 
-   
-           
+
+
 
 </Page>
 
