@@ -42,6 +42,8 @@
     <None Remove="View\Start\Resources\Viasat_btn_Active.png" />
     <None Remove="View\Start\Resources\Viasat_btn_NonActive.png" />
     <None Remove="View\Start\white_car-removebg-preview.png" />
+    <None Remove="View\Viasat\animat-rocket-color.gif" />
+    <None Remove="View\Viasat\caylent_rocket_dribbble_shot.gif" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,6 +86,8 @@
     <Resource Include="View\Start\Resources\Viasat_btn_Active.png" />
     <Resource Include="View\Start\Resources\Viasat_btn_NonActive.png" />
     <Resource Include="View\Start\white_car-removebg-preview.png" />
+    <Resource Include="View\Viasat\animat-rocket-color.gif" />
+    <Resource Include="View\Viasat\caylent_rocket_dribbble_shot.gif" />
   </ItemGroup>
 
 </Project>

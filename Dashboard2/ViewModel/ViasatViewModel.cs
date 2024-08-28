@@ -108,6 +108,9 @@ namespace Dashboard2.ViewModel
 
         private bool _isCommandProcesing;
         public bool IsCommandProcessing { get { return _isCommandProcesing; } set { _isCommandProcesing = value; OnPropertyChanged("IsCommandProcessing"); } }
+        
+        private bool _isCommandProcesing2;
+        public bool IsCommandProcessing2 { get { return _isCommandProcesing2; } set { _isCommandProcesing2 = value; OnPropertyChanged("IsCommandProcessing2"); } }
 
         //---------------------------------------------------------------
         // RESULT MAP SECTION 
@@ -159,7 +162,7 @@ namespace Dashboard2.ViewModel
         #region Actions for Commands to Execute()
         private async void _showSummaryForSelectedCar(object value)
         {
-            this.IsCommandProcessing = true;
+           
 
             this.ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
             this.ListOfSummaryResultForSelectedCar = new ObservableCollection<ObservableCollection<string>>();
@@ -177,10 +180,6 @@ namespace Dashboard2.ViewModel
                 DateTime dateTimeFrom = new DateTime(DateOnly.FromDateTime(SelectedDate), new TimeOnly(int.Parse(this.HourFromList[HourFromSelectedIndex]), int.Parse(this.MinutesFromList[MinuteFromSelectedIndex]), 0));
                 DateTime dateTimeTo = new DateTime(DateOnly.FromDateTime(SelectedDate), new TimeOnly(int.Parse(this.HourToList[HourToSelectedIndex]), int.Parse(this.MinutesToList[MinuteToSelectedIndex]), 0));
 
-                //MessageBox.Show(dateTimeFrom + "\n" + dateTimeTo);
-               // MessageBox.Show($"rok: {dateTimeFrom.Year}\nmiesiac: {dateTimeFrom.Month}\ndzien:{dateTimeFrom.Day}\nhour: {dateTimeFrom.Hour}\nminute: {dateTimeFrom.Minute}");
-               // MessageBox.Show($"rok: {dateTimeTo.Year}\nmiesiac: {dateTimeTo.Month}\ndzien:{dateTimeTo.Day}\nhour: {dateTimeTo.Hour}\nminute: {dateTimeTo.Minute}");
-
                 if(this.ListOfAvailableCars!=null)
                 {
                     this.SelectedCar = new DTOForGetLocationsForCar(this.ListOfAvailableCars[this.ListOfAvailableCarsSelectedIndex].Id, 
@@ -189,32 +188,36 @@ namespace Dashboard2.ViewModel
                                                                  dateTimeFrom,
                                                                  dateTimeTo,
                                                                  int.Parse(this.CarMinParkingTime[this.CarParkTimeIndex])
-                 );
+                                                                 );
                 }
 
                // MessageBox.Show($"{this.SelectedCar.Id}\n{this.SelectedCar.RegNum}\n{this.SelectedCar.Name}\n{this.SelectedCar.DateFrom}\n{this.SelectedCar.DateTo}\n{this.SelectedCar.CarParkTime}");
 
                 await Task.Run( () =>
                 {
-                  //  MessageBox.Show("zaczynamy");
-                     this.ListOfCheckPointsForSummaryOfResult =  this.viasatDbContext.GetLocationsExNC(this.SelectedCar);                
+                    this.IsCommandProcessing = true;
+                    //  MessageBox.Show("zaczynamy");
+                    this.ListOfCheckPointsForSummaryOfResult =  this.viasatDbContext.GetLocationsExNC(this.SelectedCar);
+                    this.IsCommandProcessing = false;
                 });
                 Task.WaitAll();
 
                 //   System.Windows.MessageBox.Show($"X0: {this.ListOfCheckPointsForSummaryOfResult[0].X}, Y0: {this.ListOfCheckPointsForSummaryOfResult[0].X}");
-
+                //System.Windows.MessageBox.Show("skonczylem task1");
 
                 await  Task.Run(() =>
                 {
-                     this.ListOfSummaryResultForSelectedCar =   this.GmapObject.InitializeCheckpointMarkersListAndRoutes(this.ListOfCheckPointsForSummaryOfResult, int.Parse(this.CarMinParkingTime[this.CarParkTimeIndex]));
-                
+                    this.IsCommandProcessing2 = true;
+                    Func<DateTime,DateTime, string, string> GetMileageFromApiDelegate = viasatDbContext.GetDeviceStatistic;
+                    this.ListOfSummaryResultForSelectedCar =   this.GmapObject.InitializeCheckpointMarkersListAndRoutes(this.ListOfCheckPointsForSummaryOfResult, int.Parse(this.CarMinParkingTime[this.CarParkTimeIndex]), SelectedCar, GetMileageFromApiDelegate);
+                    this.IsCommandProcessing2 = false;
                 });
                 Task.WaitAll();
-                this.IsCommandProcessing = false;
+              
+
+
+
                 /*
-                 * 
-                 * new Action(delegate()
-                 * 
                 if (this.ListOfCheckPointsForSummaryOfResult != null || this.ListOfCheckPointsForSummaryOfResult.Count > 0)
                 {
                   //  MessageBox.Show("wywoluje FinalTripTimeSummary");
@@ -230,16 +233,7 @@ namespace Dashboard2.ViewModel
                 //    this.GmapObject.InitialCheckpointForSelectedCarLayer(this.ListOfCheckPointsForSummaryOfResult);
                 //   MessageBox.Show("skonczylem");
             }
-
-
-
-
-
-
-
             //MessageBox.Show("dziala!");
-
-
         }
         #endregion
 
@@ -328,15 +322,32 @@ namespace Dashboard2.ViewModel
                 index++;
             }
         }
-     
+
+        public void ShowMarkerTooltip(string SearchedString)
+        {
+            if (this.GmapObject.MapObject.Overlays.Any(x => x.Id == "CheckpointsLayer"))
+            {
+                this.GmapObject.CheckpointsForSelectedCarLayer.Markers.First(x => x.ToolTipText.Contains(SearchedString)).ToolTipMode = MarkerTooltipMode.Always;
+                this.GmapObject.MapObject.Invoke(new Action(() => this.GmapObject.MapObject.Update()));
+                this.GmapObject.MapObject.Invoke(new Action(() =>  this.GmapObject.MapObject.Refresh()));
+            }
+        }
+        
+
+        public void HideMarkerTooltip(string SearchedString)
+        {
+            if (this.GmapObject.MapObject.Overlays.Any(x => x.Id == "CheckpointsLayer"))
+            {
+                 this.GmapObject.CheckpointsForSelectedCarLayer.Markers.First(x => x.ToolTipText.Contains(SearchedString)).ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                this.GmapObject.MapObject.Invoke(new Action(() => this.GmapObject.MapObject.Update()));
+                this.GmapObject.MapObject.Invoke(new Action(() => this.GmapObject.MapObject.Refresh()));
+            }
+        }
 
 
         //-------------------------------------------------
         //  METHODS FOR "RESULT CHECKPOINTS" TABLE SECTION 
         //-------------------------------------------------
-
-      
-
 
         public ObservableCollection<ObservableCollection<string>> FinalTripTimeSummary(List<CheckPoint> ListOfCheckPointsForSummaryOfResult)
             {

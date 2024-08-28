@@ -178,6 +178,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         #endregion
 
 
+
         //GetDeviceStatisticFlow()
         #region GetDeviceStatisticFlow() Viasat API function to get list of numbers of km's in selected duration for every car
         public   ObservableCollection<ViasatClientObject> GetDeviceStatisticFlow(string dateFrom, string dateTo)
@@ -228,6 +229,50 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
                 }
 
             }
+            catch (TimeoutException) { MessageBox.Show("Nie udalo sie uzyskać odpowiedzi z Api\n upłynął czas oczekiwania na odpowiedź."); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+            return null;
+        }
+        #endregion
+        
+        
+
+
+        #region GetDeviceStatistic() Viasat API function to get list of numbers of km's in selected duration for every car
+        public  string GetDeviceStatistic(DateTime dateFrom, DateTime dateTo, string selectedCarId)
+        {         
+            Task<string> TaskResult = _HttpObjectForCommunicationWithApi.SendAndReceiveHttpRequestNew(ViasatMethodsTemplateStaticClass.GetDeviceStatisticTemplate(this._SessionId, dateFrom, dateTo, selectedCarId), "GetDeviceStatistic");
+            try
+            {
+                Task.Run(() => TaskResult.WaitAsync(TimeSpan.FromSeconds(10)));
+                string ReceivedSoapBody = TaskResult.Result;
+              //  MessageBox.Show(ReceivedSoapBody);
+            
+                if (ReceivedSoapBody != null)
+                {
+                   // MessageBox.Show("1");         
+                    var ResultList = GetMileageOfKilometersFromSoapBodyForOneCar(ReceivedSoapBody);                  
+                    var TempListOfGetClientObjectsMethod = this.CarsIdAndRegnumListFromApi;
+                   
+                 
+/*
+                        string test = "";
+                        foreach(var el in ResultList)
+                        {
+                            test += $"{el.Name} - {el.Id} - {el.NumberOfKilometres}\n";
+                        }
+                        MessageBox.Show(test);
+*/
+                        return ResultList;
+                }
+                else
+                {
+                        MessageBox.Show("TempListOfGetClientObjectsMethod jest null");
+                        return null;
+                }
+            }
+
             catch (TimeoutException) { MessageBox.Show("Nie udalo sie uzyskać odpowiedzi z Api\n upłynął czas oczekiwania na odpowiedź."); }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
 
@@ -370,7 +415,26 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
         #endregion
 
       
-        //GetDeviceStatisticFlow()  helper functions
+        //GetDeviceStatistic()  helper functions
+        //===========================================================================================================
+       private string GetMileageOfKilometersFromSoapBodyForOneCar(string xmldoc)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xmldoc);
+
+            XmlNamespaceManager XmlNsManager = CreateXmlManagerToReadSoapReqest(xmlDoc);
+     
+            XmlNode node  =  xmlDoc.SelectSingleNode("//cma:dblDistance", XmlNsManager);          
+            string SessionId = node.InnerText;
+
+            return SessionId;
+       
+        }
+
+
+
+
+         //GetDeviceStatisticFlow()  helper functions
         //===========================================================================================================
        private ObservableCollection<ViasatClientObject> GetMileageOfKilometersFromSoapBodyForAllCars(string xmldoc)
         {
@@ -415,6 +479,7 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer
             
             return ReturnCarList;
         }
+
 
 
         //GetLocationsExNC()  helper functions

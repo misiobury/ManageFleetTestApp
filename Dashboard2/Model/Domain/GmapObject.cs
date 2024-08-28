@@ -13,6 +13,8 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using System.Runtime.CompilerServices;
 using Dashboard2.Model.Infrastructure.DataAccessLayer.ViasatApiPhysicalLayer;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace Dashboard2.Model.Domain
 {
@@ -22,8 +24,10 @@ namespace Dashboard2.Model.Domain
         public GMap.NET.WindowsForms.GMapControl MapObject { get; set; }
         private GMap.NET.WindowsForms.GMapOverlay markersOverlay;
         private GMap.NET.WindowsForms.GMapOverlay CompanyBranchLayer;
-        private GMap.NET.WindowsForms.GMapOverlay CheckpointsForSelectedCarLayer;
+        public GMap.NET.WindowsForms.GMapOverlay CheckpointsForSelectedCarLayer { get; set; }
         private List<CheckpointMarkerForMap> checkpointMarkerForMaps;
+     //   public List<CheckpointMarkerForMap> CheckpointMarkerForMaps { get { return checkpointMarkerForMaps; } set { checkpointMarkerForMaps = value; } }
+        
         private GMap.NET.WindowsForms.GMapOverlay RouteForSelectedCarLayer;
 
         private double srednia_lat { get; set; }
@@ -34,6 +38,7 @@ namespace Dashboard2.Model.Domain
         //=====================================================================
         //                   CONSTRUCTOR
         //=====================================================================
+      
         public GmapObject()
         {
             InitializeGmap();
@@ -48,7 +53,10 @@ namespace Dashboard2.Model.Domain
         }
 
 
-
+        //=====================================================================
+        //                   METHODS
+        //=====================================================================
+      
         private CompanyBranch  CheckIsCheckpointNextToBranch(CheckPoint checkpoint)
         {
             Location loc1 = new Location(){Longitude = checkpoint.X, Latitude = checkpoint.Y};
@@ -90,129 +98,231 @@ namespace Dashboard2.Model.Domain
         
    //=================================================================================================================================
      
-        private void InitializeRoutesBetweenCheckpoints(PointLatLng startPoint, PointLatLng endPoint, int index)
-        {                   
+        private List<PointLatLng> InitializeRoutesBetweenCheckpoints(PointLatLng startPoint, PointLatLng endPoint, int index)
+        {
+            int Index = index;
             MapRoute Route;
             GMapRoute RouteForDrawing;
-           
-                Route = OpenStreetMapProvider.Instance.GetRoute(startPoint, endPoint, false, false, 12);
-                RouteForDrawing = new GMapRoute(Route.Points, $"route{index}");
-                RouteForDrawing.Stroke = new System.Drawing.Pen(System.Drawing.Color.DeepSkyBlue, 3);
-               this.RouteForSelectedCarLayer.Routes.Add(RouteForDrawing);
 
-           
-     
+            Route = OpenStreetMapProvider.Instance.GetRoute(startPoint, endPoint, false, false, 12);
+ 
+            return Route.Points;
+
+           // MapObject.Invoke(new Action(() => MapObject.Update()));
+           // MapObject.Invoke(new Action(() => MapObject.Refresh()));
+
         }
 
-        public ObservableCollection<ObservableCollection<string>> InitializeCheckpointMarkersListAndRoutes(List<CheckPoint> checkpointsList, int CarParkTime )
-        {
+
+
+        public ObservableCollection<ObservableCollection<string>> InitializeCheckpointMarkersListAndRoutes(List<CheckPoint> checkpointsList, int CarParkTime, DTOForGetLocationsForCar CarObject, Func<DateTime, DateTime, string, string> GetMileageFromApiDelegate)
+        { 
+            List<string> lista = new List<string>();
+                      
+
             if (checkpointsList.Count != 0 || checkpointsList != null)
             {
+                //clear CheckpointLayer
                 if (MapObject.Overlays.Any(x => x.Id == "CheckpointsLayer"))
                 {
-                    MapObject.Overlays.Where(x => x.Id == "CheckpointsLayer").ToList().RemoveAll(x => x.Id == "CheckpointsLayer");
+                    CheckpointsForSelectedCarLayer.Markers.Clear();                  
                     this.checkpointMarkerForMaps = new List<CheckpointMarkerForMap>();
-                   // MapObject.Invoke(new Action(() => MapObject.Update()));
-                   // MapObject.Invoke(new Action(() => MapObject.Refresh()));
-                    MapObject.Invoke(new Action(() => InitializeGmap()));
+                     MapObject.Invoke(new Action(() => MapObject.Update()));
+                     MapObject.Invoke(new Action(() => MapObject.Refresh()));
                 }
+                //clear RoutesLayer
                 if (MapObject.Overlays.Any(x => x.Id == "RoutesLayer"))
                 {
-                    MapObject.Overlays.Where(x => x.Id == "RoutesLayer").ToList().RemoveAll(x => x.Id == "RoutesLayer");
-                    this.RouteForSelectedCarLayer = new GMapOverlay();
+                    this.RouteForSelectedCarLayer.Routes.Clear();
+                    MapObject.Invoke(new Action(() => MapObject.Update()));
                     MapObject.Invoke(new Action(() => MapObject.Refresh()));
                 }
 
-               
-               
-
+                //init checkpoint and route layers
                 this.CheckpointsForSelectedCarLayer = new GMap.NET.WindowsForms.GMapOverlay("CheckpointsLayer");
                 this.checkpointMarkerForMaps = new List<CheckpointMarkerForMap>();
                 MapObject.Overlays.Add(this.CheckpointsForSelectedCarLayer);
 
                 this.RouteForSelectedCarLayer = new GMapOverlay("RoutesLayer");
 
-
                 Location tempLocation = new Location();
-               string? tempLocationString = CheckIsCheckpointNextToBranch(checkpointsList[0]) != null ? CheckIsCheckpointNextToBranch(checkpointsList[0]).Name :  checkpointsList[0].LocalizationDescription;        
-               CheckpointMarkerForMap? tempCheckpoint = new CheckpointMarkerForMap(1, checkpointsList[0].DateTimeReading, checkpointsList[0].DateTimeReading, tempLocationString, checkpointsList[0].X, checkpointsList[0].Y);
+                string? tempLocationString = CheckIsCheckpointNextToBranch(checkpointsList[0]) != null ? CheckIsCheckpointNextToBranch(checkpointsList[0]).Name + " (ODDZIAŁ)" :  checkpointsList[0].LocalizationDescription;        
+                CheckpointMarkerForMap? tempCheckpoint = new CheckpointMarkerForMap(1, checkpointsList[0].DateTimeReading, checkpointsList[0].DateTimeReading, tempLocationString, checkpointsList[0].X, checkpointsList[0].Y);
+
+                var PointsForDrawingRoute = new List<PointLatLng>();
+
+                /*
+                                Stopwatch stopWatch = new Stopwatch();
+                                stopWatch.Start();
+                */
 
 
 
                 for (int i = 1, index=1; i < checkpointsList.Count; i++)
-                {
+                {                 
                     //check is distance between checkpoint <100
                     if (CheckIsCheckpointNextToOtherCheckpoint(checkpointsList[i], checkpointsList[i-1]))
                     {
                         tempCheckpoint.EndReadingTime = checkpointsList[i].DateTimeReading;
                         if(i== checkpointsList.Count-1)
                     {
-                       // AddMarkerToMarkersLayer(tempCheckpoint.Y, tempCheckpoint.X, $"\n{tempCheckpoint.Id} -> {tempCheckpoint.StartReadingTime}-{tempCheckpoint.EndReadingTime}\n{tempCheckpoint.Address}");
-                        this.checkpointMarkerForMaps.Add(tempCheckpoint);
+                       this.checkpointMarkerForMaps.Add(tempCheckpoint);
                     }          
                     }
                     //distance between checkpoint > 100
                     else
                     {
-                            //  AddMarkerToMarkersLayer(tempCheckpoint.Y, tempCheckpoint.X, $"{tempCheckpoint.Id} -> {tempCheckpoint.StartReadingTime}-{tempCheckpoint.EndReadingTime}\n{tempCheckpoint.Address}"  );
-                        
                         if(tempCheckpoint != null)
                         {
                             this.checkpointMarkerForMaps.Add(tempCheckpoint);
                             tempCheckpoint = null;
                         }
-                        
+                                              
+                        var j = i;
+                        var Index = index;
 
-                        InitializeRoutesBetweenCheckpoints(new PointLatLng(checkpointsList[i-1].Y, checkpointsList[i-1].X), new PointLatLng(checkpointsList[i].Y, checkpointsList[i].X), index);
-                       
+                        PointsForDrawingRoute.AddRange(  InitializeRoutesBetweenCheckpoints(new PointLatLng(checkpointsList[j - 1].Y, checkpointsList[j - 1].X), new PointLatLng(checkpointsList[j].Y, checkpointsList[j].X), Index));
+                                        
                          if (i != checkpointsList.Count - 1)
                         {
                             if (CheckIsCheckpointNextToOtherCheckpoint(checkpointsList[i + 1], checkpointsList[i]))
                             {
                                 index++;
-                                tempLocationString = CheckIsCheckpointNextToBranch(checkpointsList[i]) != null ? CheckIsCheckpointNextToBranch(checkpointsList[i]).Name : checkpointsList[i].LocalizationDescription;
+                                tempLocationString = CheckIsCheckpointNextToBranch(checkpointsList[i]) != null ? CheckIsCheckpointNextToBranch(checkpointsList[i]).Name + " (ODDZIAŁ)" : checkpointsList[i].LocalizationDescription;
                                 tempCheckpoint = new CheckpointMarkerForMap(index, checkpointsList[i].DateTimeReading, checkpointsList[i].DateTimeReading, tempLocationString, checkpointsList[i].X, checkpointsList[i].Y);
                             }
                         }                             
-                    }                          
+                    }                                        
                 }
 
-                ObservableCollection<ObservableCollection<string>> ListOfSummaryResultForSelectedCar = new ObservableCollection<ObservableCollection<string>>();
-          
-                foreach (var el in this.checkpointMarkerForMaps)
+/*
+                stopWatch.Stop();
+                TimeSpan ts = stopWatch.Elapsed;
+
+                string elapsedTime = $"etap 1 (petla):{stopWatch.Elapsed.Milliseconds}\n";
+                lista.Add(elapsedTime);
+                stopWatch.Start();
+*/
+ 
+                Action action1 = () =>
                 {
-                    if (IsTheCheckpointABrake(el, CarParkTime))
+                    var RouteForDrawing = new GMapRoute(PointsForDrawingRoute, $"route{1}");
+                    RouteForDrawing.Stroke = new System.Drawing.Pen(System.Drawing.Color.DeepSkyBlue, 4);
+                    this.RouteForSelectedCarLayer.Routes.Add(RouteForDrawing);
+                    MapObject.Overlays.Add(this.RouteForSelectedCarLayer);
+
+
+                };
+                                         
+/*
+                stopWatch.Stop();
+                 ts = stopWatch.Elapsed;
+
+                elapsedTime = $"etap 2 (generowanie drogi):{stopWatch.Elapsed.Milliseconds}\n";    
+                lista.Add(elapsedTime);
+                stopWatch.Start();
+
+                */
+                ObservableCollection<ObservableCollection<string>> ListOfSummaryResultForSelectedCar = new ObservableCollection<ObservableCollection<string>>();
+
+                Action action2 = () =>
+                {
+                    int RemberedIndexOfThePreviousCar = 0;
+                    for (int i = 0, index = 1; i < this.checkpointMarkerForMaps.Count; i++)
                     {
-                        AddMarkerToMarkersLayer(el.Y, el.X, $"\n{el.Id} -> {el.StartReadingTime}-{el.EndReadingTime}\n{el.Address}");
-                        ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { $"{el.StartReadingTime}-{el.EndReadingTime}", "POSTÓJ", $"{el.Address}" });
+                        if(i == 0)
+                        {
+                            checkpointMarkerForMaps[i].Id = index;
+                            index++;
+                            AddMarkerToMarkersLayer(checkpointMarkerForMaps[i].Y, checkpointMarkerForMaps[i].X, $"\n{checkpointMarkerForMaps[i].Id} -> {checkpointMarkerForMaps[i].StartReadingTime}-{checkpointMarkerForMaps[i].EndReadingTime}\n{checkpointMarkerForMaps[i].Address}");
+                            ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { $"{checkpointMarkerForMaps[i].Id}", $"{checkpointMarkerForMaps[i].StartReadingTime}-{checkpointMarkerForMaps[i].EndReadingTime}", "POSTÓJ", $"{checkpointMarkerForMaps[i].Address}" });
+                            
+                        }
+                        else if (IsTheCheckpointABrake(checkpointMarkerForMaps[i], CarParkTime))
+                        {
+                            DateTime startDate = new DateTime(DateOnly.FromDateTime(CarObject.DateFrom), new TimeOnly( checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].StartReadingTime.Hour, checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].StartReadingTime.Minute, checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].StartReadingTime.Second));
+                            var IndexOfStartReadingTime = RemberedIndexOfThePreviousCar;
+                            RemberedIndexOfThePreviousCar = i;
+
+                            DateTime endDate = new DateTime(DateOnly.FromDateTime(CarObject.DateTo), new TimeOnly( checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].EndReadingTime.Hour, checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].EndReadingTime.Minute, checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].EndReadingTime.Second));
+                            string tempMileage = GetMileageFromApiDelegate(startDate, endDate, CarObject.Id);
+
+                            ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { $"{index}", $"{checkpointMarkerForMaps[IndexOfStartReadingTime].StartReadingTime}-{checkpointMarkerForMaps[RemberedIndexOfThePreviousCar].EndReadingTime}", "PRZEJAZD", $"({tempMileage} km)" });
+                            index++;
+                            checkpointMarkerForMaps[i].Id = index;    
+                            index++;
+
+                            AddMarkerToMarkersLayer(checkpointMarkerForMaps[i].Y, checkpointMarkerForMaps[i].X, $"\n{checkpointMarkerForMaps[i].Id} -> {checkpointMarkerForMaps[i].StartReadingTime}-{checkpointMarkerForMaps[i].EndReadingTime}\n{checkpointMarkerForMaps[i].Address}");
+                            ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { $"{checkpointMarkerForMaps[i].Id}", $"{checkpointMarkerForMaps[i].StartReadingTime}-{checkpointMarkerForMaps[i].EndReadingTime}", "POSTÓJ", $"{checkpointMarkerForMaps[i].Address}" });
+                          }
+                        else if (i == this.checkpointMarkerForMaps.Count - 1)
+                        {
+                            checkpointMarkerForMaps[i].Id = index;
+                            index++;
+                            AddMarkerToMarkersLayer(checkpointMarkerForMaps[i].Y, checkpointMarkerForMaps[i].X, $"\n{checkpointMarkerForMaps[i].Id} -> {checkpointMarkerForMaps[i].StartReadingTime}-{checkpointMarkerForMaps[i].EndReadingTime}\n{checkpointMarkerForMaps[i].Address}");
+                            ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { $"{checkpointMarkerForMaps[i].Id}", $"{checkpointMarkerForMaps[i].StartReadingTime}-{checkpointMarkerForMaps[i].EndReadingTime}", "POSTÓJ", $"{checkpointMarkerForMaps[i].Address}" });
+                        }
                     }
 
-                     
+
+                    DateTime startDate2 = new DateTime(DateOnly.FromDateTime(CarObject.DateFrom), new TimeOnly(checkpointMarkerForMaps[0].StartReadingTime.Hour, checkpointMarkerForMaps[0].StartReadingTime.Minute, checkpointMarkerForMaps[0].StartReadingTime.Second));
+                    DateTime endDate2 = new DateTime(DateOnly.FromDateTime(CarObject.DateTo), new TimeOnly(checkpointMarkerForMaps[this.checkpointMarkerForMaps.Count-1].EndReadingTime.Hour, checkpointMarkerForMaps[this.checkpointMarkerForMaps.Count-1].EndReadingTime.Minute, checkpointMarkerForMaps[this.checkpointMarkerForMaps.Count-1].EndReadingTime.Second));
+                    
+                    string TotalMileage = GetMileageFromApiDelegate(startDate2, endDate2, CarObject.Id);
+                    ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { "", "", "", "" });
+                    ListOfSummaryResultForSelectedCar.Add(new ObservableCollection<string>() { "", "", "", $"SUMA: {TotalMileage}km" });
+               
+
+                };
+
+
+                List<Action> list = new List<Action>();
+                list.Add(action1);
+                list.Add(action2);
+                Parallel.Invoke(list.ToArray());
+
+
+/*
+                    stopWatch.Stop();
+                ts = stopWatch.Elapsed;
+
+                elapsedTime = $"etap 3 (po wygenerowaniu markerow):{stopWatch.Elapsed.Milliseconds}";
+                lista.Add(elapsedTime);
+*/
+
+
+                MapObject.Invoke(new Action(() => MapObject.Zoom = 10)); 
+                MapObject.Invoke(new Action(() => MapObject.Zoom = 11));
+                // MapObject.Invoke(new Action(() => MapObject.ReloadMap()));
+                string finalstring = "";
+                foreach(var el in lista)
+                {
+                    finalstring += el;
                 }
-
-
-                MapObject.Overlays.Add(this.RouteForSelectedCarLayer);
-               MapObject.Invoke(new Action(() => MapObject.Zoom = 11));
-
-                    return ListOfSummaryResultForSelectedCar;
+             //  MessageBox.Show(finalstring);
+                return ListOfSummaryResultForSelectedCar;
             }
             else
 
             return null;
         }
 
+
+
+
         private bool IsTheCheckpointABrake(CheckpointMarkerForMap Chckpnt,  int CarParkTime)
         {
-
             TimeSpan BreakTime = new TimeSpan(00, CarParkTime, 00);
             if (Chckpnt.EndReadingTime - Chckpnt.StartReadingTime >= BreakTime)
             {
-                // Console.WriteLine("roznica czasowa: "+(Chckpnt1.DateTimeReading - Chckpnt2.DateTimeReading));
                 return true;
             }
             else
                 return false;
         }
+
+
+
 
         //=============================================================================================================================================================
         private void InitializeRoutesBetweenCheckpoints(List<CheckpointMarkerForMap> checkpointList)
@@ -254,11 +364,12 @@ namespace Dashboard2.Model.Domain
         public void InitializeGmap()
         {
             MapObject = new GMap.NET.WindowsForms.GMapControl();
-            MapObject.MapProvider = GMap.NET.MapProviders.GMapProviders.OpenStreetMap;
+            MapObject.MapProvider = GMap.NET.MapProviders.GMapProviders.GoogleMap;
             MapObject.MinZoom = 1;
             MapObject.MaxZoom = 20;
             MapObject.Dock = DockStyle.Fill;
             MapObject.DragButton = MouseButtons.Left;
+            MapObject.ShowCenter = false;
         
             MapObject.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(gmap_MouseDoubleClick);                                                             ////object? sender, System.Windows.Forms.MouseEventArgs e
             MapObject.MouseClick += new System.Windows.Forms.MouseEventHandler(gmap_MouseOneClick);
@@ -278,7 +389,7 @@ namespace Dashboard2.Model.Domain
         }
 
 
-      
+        
 
         private void AddMarkerToMarkersLayer(double lat, double lng, string description)
         {            
@@ -289,19 +400,21 @@ namespace Dashboard2.Model.Domain
                 GMap.NET.WindowsForms.Markers.GMarkerGoogleType.blue_pushpin);
 
             marker.ToolTipText = description;
+           
             marker.ToolTip.Fill = System.Drawing.Brushes.AliceBlue;
             marker.ToolTip.Foreground = System.Drawing.Brushes.Black;
             marker.ToolTip.Stroke = Pens.Black;
-            marker.ToolTip.TextPadding = new System.Drawing.Size(20, 20);
-           // marker.IsVisible = true;
+            marker.ToolTip.TextPadding = new System.Drawing.Size(5, 5);
           
             this.MapObject.UpdateMarkerLocalPosition(marker);
             this.CheckpointsForSelectedCarLayer.Markers.Add(marker);
-           MapObject.Invoke(new Action(() =>  marker.Overlay.Control.ZoomAndCenterMarkers(this.CheckpointsForSelectedCarLayer.Id)));
+
+          
+            MapObject.Invoke(new Action(() =>  marker.Overlay.Control.ZoomAndCenterMarkers(this.CheckpointsForSelectedCarLayer.Id)));
            
     
         //    MapObject.Update();
-            //   marker.Overlay.Control.ZoomAndCenterMarkers(this.CheckpointsForSelectedCarLayer.Id);
+            //  marker.Overlay.Control.ZoomAndCenterMarkers(this.CheckpointsForSelectedCarLayer.Id);
 
         }
 

@@ -21,25 +21,85 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Dashboard2.View.Viasat
 {
-    public partial class ViasatPage : Page
+    public partial class ViasatPage : System.Windows.Controls.Page
     {
 
 
-        //  public ViasatViewModel _ViasatViewModel { get; set; }
-        //  ViasatDbContext _viasatDbContext { get; set; }
+        private System.Windows.Controls.ListViewItem _currentItem = null;
 
-      //  ViasatViewModel x; 
 
-        //=========================================================================================================================
+        //=============================================================
         //                   CONSTRUCTOR
-        //=========================================================================================================================        
+        //=============================================================     
         public ViasatPage()
         {             
-            InitializeComponent();      
+            InitializeComponent();
+          
+            
+          
         }
+
+
+
+        //===========================================================
+        //                    METHODS
+        //===========================================================       
+        private void ListViewItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var item = sender as System.Windows.Controls.ListViewItem;
+
+            if (_currentItem != null)
+            {
+                int index = this.ListCheckpointOwn.ItemContainerGenerator.IndexFromContainer(item);
+
+                var CurrentDataContext = (ViasatViewModel)this.DataContext;
+                // System.Windows.MessageBox.Show(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][0]); 
+                if (CurrentDataContext.ListOfSummaryResultForSelectedCar[index][2] == "POSTÓJ" )
+                {
+                    CurrentDataContext.HideMarkerTooltip(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][3]);
+                }
+            }
+           
+            if (!Equals(_currentItem, item))
+            {
+                _currentItem = item;
+                var CurrentDataContext = (ViasatViewModel)this.DataContext;
+                int index = this.ListCheckpointOwn.ItemContainerGenerator.IndexFromContainer(item);
+               if(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][2] == "POSTÓJ")
+                {                  
+                    CurrentDataContext.ShowMarkerTooltip(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][3]);
+                }
+
+
+              
+            }
+        }
+
+
+        private void ListViewItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+           //  System.Windows.MessageBox.Show("mouseleave");
+            
+            var item = sender as System.Windows.Controls.ListViewItem;
+            if (Equals(_currentItem, item))
+            {
+                _currentItem = item;
+                var CurrentDataContext = (ViasatViewModel)this.DataContext;
+                int index = this.ListCheckpointOwn.ItemContainerGenerator.IndexFromContainer(item);
+                if (CurrentDataContext.ListOfSummaryResultForSelectedCar[index][2] == "POSTÓJ")
+                {
+                    CurrentDataContext.HideMarkerTooltip(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][3]);
+                }
+                    
+               
+            }
+            _currentItem = null;
+        }
+
 
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -48,10 +108,12 @@ namespace Dashboard2.View.Viasat
             Panel2.Controls.Add(CurrentDataContext.GmapObject.MapObject); 
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
+
+
+
+
+
         
-        }
 
 
         /*
