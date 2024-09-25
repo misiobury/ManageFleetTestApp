@@ -48,7 +48,29 @@ namespace Dashboard2.View.Viasat
         //===========================================================
         //                    METHODS
         //===========================================================       
-        private void ListViewItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+
+        private void ListViewItemSelectedCarsTable_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
+            var item = sender as System.Windows.Controls.ListViewItem;
+            int index = this.ListOfSelectedCars.ItemContainerGenerator.IndexFromContainer(item);
+
+            var CurrentDataContext = (ViasatViewModel)this.DataContext;
+
+           // System.Windows.MessageBox.Show("index: "+index.ToString());
+
+            CurrentDataContext.ShowSummaryForSelectedCar.Execute(index);
+        
+
+
+           // System.Windows.MessageBox.Show("po wywolaniu");
+
+
+        }
+
+     
+
+            private void ListViewItemCheckpointTable_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             var item = sender as System.Windows.Controls.ListViewItem;
 
@@ -58,10 +80,11 @@ namespace Dashboard2.View.Viasat
 
                 var CurrentDataContext = (ViasatViewModel)this.DataContext;
                 // System.Windows.MessageBox.Show(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][0]); 
-                if (CurrentDataContext.ListOfSummaryResultForSelectedCar[index][2] == "POSTÓJ" )
+                if (CurrentDataContext.CheckpointsListForSelectedCarFromList[index].Status == "POSTÓJ" )
                 {
-                    CurrentDataContext.HideMarkerTooltip(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][3]);
+                    CurrentDataContext.HideMarkerTooltip(CurrentDataContext.CheckpointsListForSelectedCarFromList[index].Address);
                 }
+               // System.Windows.MessageBox.Show("2");
             }
            
             if (!Equals(_currentItem, item))
@@ -69,18 +92,18 @@ namespace Dashboard2.View.Viasat
                 _currentItem = item;
                 var CurrentDataContext = (ViasatViewModel)this.DataContext;
                 int index = this.ListCheckpointOwn.ItemContainerGenerator.IndexFromContainer(item);
-               if(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][2] == "POSTÓJ")
+               if(CurrentDataContext.CheckpointsListForSelectedCarFromList[index].Status == "POSTÓJ")
                 {                  
-                    CurrentDataContext.ShowMarkerTooltip(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][3]);
+                    CurrentDataContext.ShowMarkerTooltip(CurrentDataContext.CheckpointsListForSelectedCarFromList[index].Address);
                 }
 
+               // System.Windows.MessageBox.Show("2");
 
-              
             }
         }
 
 
-        private void ListViewItem_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ListViewItemCheckpointTable_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
            //  System.Windows.MessageBox.Show("mouseleave");
             
@@ -90,15 +113,27 @@ namespace Dashboard2.View.Viasat
                 _currentItem = item;
                 var CurrentDataContext = (ViasatViewModel)this.DataContext;
                 int index = this.ListCheckpointOwn.ItemContainerGenerator.IndexFromContainer(item);
-                if (CurrentDataContext.ListOfSummaryResultForSelectedCar[index][2] == "POSTÓJ")
+                if (CurrentDataContext.CheckpointsListForSelectedCarFromList[index].Status == "POSTÓJ")
                 {
-                    CurrentDataContext.HideMarkerTooltip(CurrentDataContext.ListOfSummaryResultForSelectedCar[index][3]);
+                    CurrentDataContext.HideMarkerTooltip(CurrentDataContext.CheckpointsListForSelectedCarFromList[index].Address);
                 }
                     
                
             }
             _currentItem = null;
         }
+
+
+          private void AddCarToList(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            //  System.Windows.MessageBox.Show("mouseleave");
+
+
+
+          
+        }
+
+
 
 
 
@@ -108,12 +143,23 @@ namespace Dashboard2.View.Viasat
             Panel2.Controls.Add(CurrentDataContext.GmapObject.MapObject); 
         }
 
+        private void ListOfAvailableCars_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var CurrentDataContext = (ViasatViewModel)this.DataContext;
+           CurrentDataContext.AddCarToSelectedList.Execute(sender);
+
+            
+        }
+
+       private void ListOfSelectedCars_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.MessageBox.Show("test");
+        }
 
 
 
 
 
-        
 
 
         /*

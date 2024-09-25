@@ -21,7 +21,46 @@
     <Page Remove="Model\Infrastructure\Repositories\**" />
   </ItemGroup>
 
+	
+
   <ItemGroup>
+    <None Remove="animat-rocket-color.gif" />
+    <None Remove="CarIcon\LexusIcon.png" />
+    <None Remove="CarIcon\LexusIcon2.png" />
+    <None Remove="CarIcon\LexusIcon3.png" />
+    <None Remove="CarIcon\LexusIcon4.png" />
+    <None Remove="CarIcon\StarIcon.png" />
+    <None Remove="CarLogoImage\Alfa Romeo.png" />
+    <None Remove="CarLogoImage\Audi.png" />
+    <None Remove="CarLogoImage\BMW.png" />
+    <None Remove="CarLogoImage\Chevrolet.png" />
+    <None Remove="CarLogoImage\Citroen.png" />
+    <None Remove="CarLogoImage\Daf.png" />
+    <None Remove="CarLogoImage\Fiat.png" />
+    <None Remove="CarLogoImage\Ford.png" />
+    <None Remove="CarLogoImage\Honda.png" />
+    <None Remove="CarLogoImage\Hyundai.png" />
+    <None Remove="CarLogoImage\Infiniti.png" />
+    <None Remove="CarLogoImage\Iveco.png" />
+    <None Remove="CarLogoImage\Jeep.png" />
+    <None Remove="CarLogoImage\Kia.png" />
+    <None Remove="CarLogoImage\Land Rover.png" />
+    <None Remove="CarLogoImage\Lexus.png" />
+    <None Remove="CarLogoImage\Man.png" />
+    <None Remove="CarLogoImage\Mazda.png" />
+    <None Remove="CarLogoImage\Mercedes.png" />
+    <None Remove="CarLogoImage\Mini.png" />
+    <None Remove="CarLogoImage\Mitsubishi.png" />
+    <None Remove="CarLogoImage\Nissan.png" />
+    <None Remove="CarLogoImage\Opel.png" />
+    <None Remove="CarLogoImage\Peugeot.png" />
+    <None Remove="CarLogoImage\Renault.png" />
+    <None Remove="CarLogoImage\Seat.png" />
+    <None Remove="CarLogoImage\Skoda.png" />
+    <None Remove="CarLogoImage\Star.png" />
+    <None Remove="CarLogoImage\Toyota.png" />
+    <None Remove="CarLogoImage\Volvo.png" />
+    <None Remove="CarLogoImage\VW.png" />
     <None Remove="View\Start\419-4193000_car-icons-above-small-car-icon-from-above.png" />
     <None Remove="View\Start\blue-sports-car-driver_resizer.png" />
     <None Remove="View\Start\blue-sports-car-isolated-white-resize.png" />
@@ -42,8 +81,6 @@
     <None Remove="View\Start\Resources\Viasat_btn_Active.png" />
     <None Remove="View\Start\Resources\Viasat_btn_NonActive.png" />
     <None Remove="View\Start\white_car-removebg-preview.png" />
-    <None Remove="View\Viasat\animat-rocket-color.gif" />
-    <None Remove="View\Viasat\caylent_rocket_dribbble_shot.gif" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +104,40 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="App.xaml" />
+    <Resource Include="CarIcon\LexusIcon4.png" />
+    <Resource Include="CarIcon\StarIcon.png" />
+    <Resource Include="CarLogoImage\Alfa Romeo.png" />
+    <Resource Include="CarLogoImage\Audi.png" />
+    <Resource Include="CarLogoImage\BMW.png" />
+    <Resource Include="CarLogoImage\Chevrolet.png" />
+    <Resource Include="CarLogoImage\Citroen.png" />
+    <Resource Include="CarLogoImage\Daf.png" />
+    <Resource Include="CarLogoImage\Fiat.png" />
+    <Resource Include="CarLogoImage\Ford.png" />
+    <Resource Include="CarLogoImage\Honda.png" />
+    <Resource Include="CarLogoImage\Hyundai.png" />
+    <Resource Include="CarLogoImage\Infiniti.png" />
+    <Resource Include="CarLogoImage\Iveco.png" />
+    <Resource Include="CarLogoImage\Jeep.png" />
+    <Resource Include="CarLogoImage\Kia.png" />
+    <Resource Include="CarLogoImage\Land Rover.png" />
+    <Resource Include="CarLogoImage\Lexus.png" />
+    <Resource Include="CarLogoImage\Man.png" />
+    <Resource Include="CarLogoImage\Mazda.png" />
+    <Resource Include="CarLogoImage\Mercedes.png" />
+    <Resource Include="CarLogoImage\Mini.png" />
+    <Resource Include="CarLogoImage\Mitsubishi.png" />
+    <Resource Include="CarLogoImage\Nissan.png" />
+    <Resource Include="CarLogoImage\Opel.png" />
+    <Resource Include="CarLogoImage\Peugeot.png" />
+    <Resource Include="CarLogoImage\Renault.png" />
+    <Resource Include="CarLogoImage\Seat.png" />
+    <Resource Include="CarLogoImage\Skoda.png" />
+    <Resource Include="CarLogoImage\Star.png" />
+    <Resource Include="CarLogoImage\Toyota.png" />
+    <Resource Include="CarLogoImage\Volvo.png" />
+    <Resource Include="CarLogoImage\VW.png" />
     <Resource Include="View\Start\blue-sports-car-driver_resizer.png" />
     <Resource Include="View\Start\blue-sports-car-isolated-white-resize.png" />
     <Resource Include="View\Start\blue_car_with_GPS.png" />
@@ -86,8 +157,6 @@
     <Resource Include="View\Start\Resources\Viasat_btn_Active.png" />
     <Resource Include="View\Start\Resources\Viasat_btn_NonActive.png" />
     <Resource Include="View\Start\white_car-removebg-preview.png" />
-    <Resource Include="View\Viasat\animat-rocket-color.gif" />
-    <Resource Include="View\Viasat\caylent_rocket_dribbble_shot.gif" />
   </ItemGroup>
 
 </Project>

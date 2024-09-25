@@ -17,8 +17,8 @@ namespace Dashboard2
             base.OnStartup(e);
             MainWindow = new MainWindow();
             //MessageBox.Show("1");
-           MainWindow.DataContext= new MainViewModel();
-         MainWindow.Show();
+             MainWindow.DataContext= new MainViewModel();
+            MainWindow.Show();
 
         }
       

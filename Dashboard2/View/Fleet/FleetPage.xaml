@@ -12,7 +12,10 @@
       x:Name="stronafloty"
        Background="#EDF2FF"
     >
-<!--
+   
+   
+  
+    <!--
     <Page.DataContext>
         <local1:FleetViewModel/>
     </Page.DataContext>
@@ -28,11 +31,11 @@
 
         <!-- PAGE TITLE -->
         <TextBlock Grid.Row="0" Style="{DynamicResource PageTitleTextBlock}" Text="{Binding PageTitle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-        
-        <Button x:Name="AddNewCarBtn" Grid.Row="0" Style="{StaticResource AddButton}"  >
+
+        <Button x:Name="AddNewCarBtn" Grid.Row="0" Style="{StaticResource AddButton}"  Command="{Binding ShowTest3}" >
             <StackPanel Orientation="Horizontal">
-                <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="11" Height="11" Margin="3,3,7,3" />
-                <TextBlock Text="Dodaj Nowe Auto"/>
+                <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="18" Height="18" Margin="3,3,9,3" />
+                <TextBlock Text="Dodaj Nowe Auto" VerticalAlignment="Center"/>
             </StackPanel>
         </Button>
 
@@ -42,15 +45,179 @@
 
 
         <!-- TAB BUTTONS -->
-        <Border Grid.Row="2" BorderBrush="White" BorderThickness="0 0 0 2">
-            <StackPanel  Orientation="Horizontal" Margin="0,10,0,0">
+       <!-- <Border Grid.Row="2" BorderBrush="White" BorderThickness="0 0 0 2" >  -->
+            <StackPanel Grid.Row="2"  Orientation="Horizontal" Margin="0,10,0,0">
                 <Button x:Name="GeneralSectionBtn" Content="Ogólne"  Style="{StaticResource GeneralSectionBtnStyle}" Command="{Binding GeneralTabBtnClicked}"/>
                 <Button x:Name="TankSectionBtn" Content="Tankowanie" Style="{StaticResource TankSectionBtnStyle}" Command="{Binding TankTabBtnClicked}" />
                 <Button x:Name="ServiceSectionBtn" Content="Serwis" Style="{StaticResource ServiceSectionBtnStyle}" Command="{Binding ServiceTabBtnClicked}"/>
                 <Button x:Name="BuySellSectionBtn" Content="Zakup/Sprzedaż" Style="{StaticResource BuySellSectionBtnStyle}" Command="{Binding BuySellTabBtnClicked}" />
             </StackPanel>
-        </Border>
         
+        
+        <!-- DELETE FILTER BUTTON -->
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right" Style="{StaticResource dockstyle}">           
+            <Border VerticalAlignment="Center">
+                <WrapPanel Grid.Row="2" Orientation="Horizontal"  Width="700" HorizontalAlignment="Right" Margin="0 0 7 0">
+
+                    <Border x:Name="BrandBtn" Style="{StaticResource BrandFilterBorder}" Width="170" Padding="2 0" ToolTip="{Binding FilterContentsToolTip, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" >
+                             <StackPanel Orientation="Horizontal" Background="Transparent" >                              
+                                     <Button Style="{StaticResource DeleteFilterButton}" Command="{Binding DeleteBrandCarFilter}" CommandParameter="All" />
+                                 
+                               
+                       <!--     <Button  Width="29" Height="29" Margin=" 0" Background="Transparent"  BorderThickness="0" >
+                                <Icon:PackIconMaterial Kind="CloseBox" VerticalAlignment="Center" Foreground="#2D53DA" Width="21" Height="21" Margin="0"  />
+                            </Button>
+                                
+                                 -->
+                                 <TextBlock Text="Marka:" Foreground="#2D53DA" VerticalAlignment="Center" Margin="0 0 2 0"/>
+                            <TextBlock Text="{Binding FilterContents, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold" Foreground="#2D53DA" VerticalAlignment="Center" />
+                             </StackPanel>
+                        </Border>                       
+                   
+                
+                <Button x:Name="TypeBtn" Style="{StaticResource FilterButton}"  Command="{Binding ShowTest3}" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <Icon:PackIconLucide Kind="Tag" VerticalAlignment="Center" Width="14" Height="16" Margin="3,3,3,3" />
+                        <TextBlock Text="Rodzaj: "  VerticalAlignment="Center" Margin="0 0 5 0"/>
+                        <TextBlock Text="Rodzaj" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button> 
+                
+                <Button x:Name="BranchBtn" Style="{StaticResource FilterButton}"  Command="{Binding ShowTest3}" Visibility="Collapsed" >
+                    <StackPanel Orientation="Horizontal">
+                        <Icon:PackIconLucide Kind="Tag" VerticalAlignment="Center" Width="14" Height="16" Margin="3,3,3,3" />
+                        <TextBlock Text="Oddział: "  VerticalAlignment="Center" Margin="0 0 5 0"/>
+                        <TextBlock Text="Żółkiewskiego" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button> 
+                
+                <Button x:Name="OwnedBtn" Style="{StaticResource FilterButton}"  Command="{Binding ShowTest3}"  Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <Icon:PackIconLucide Kind="Tag" VerticalAlignment="Center" Width="14" Height="16" Margin="3,3,3,3" />
+                        <TextBlock Text="Własny: "  VerticalAlignment="Center" Margin="0 0 5 0"/>
+                        <TextBlock Text="Tak" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </WrapPanel>
+            </Border>
+
+
+            <Button x:Name="AddFilterBtn" Grid.Row="2" Style="{StaticResource EditButton}" ToolTip="Filtruj" Command="{Binding ShowTest3}"  VerticalAlignment="Center" >
+                <Border CornerRadius="10" BorderThickness="1" BorderBrush="Transparent">
+                    
+               
+                    <Menu ItemContainerStyle="{StaticResource MenuItemContainerStyle1}" Background="Transparent" BorderThickness="0"  >
+                        <MenuItem Width="80" Height="33"    >
+                            <MenuItem Header="Marka" >
+                                <MenuItem Header="Alfa Romeo" IsCheckable="True" IsChecked="{Binding AlfaRomeoFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
+                                <MenuItem Header="Audi" IsCheckable="True"  IsChecked="{Binding AudiFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="BMW" IsCheckable="True"  IsChecked="{Binding BMWFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="Chevrolet" IsCheckable="True"  IsChecked="{Binding ChevroletFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
+                                <MenuItem Header="Citroen" IsCheckable="True"  IsChecked="{Binding CitroenFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="Daf"  IsCheckable="True" IsChecked="{Binding DafFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="Fiat"  IsCheckable="True"  IsChecked="{Binding FiatFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="Ford"  IsCheckable="True"  IsChecked="{Binding FordFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="Honda"  IsCheckable="True"  IsChecked="{Binding HondaFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <MenuItem Header="Hyundai"  IsCheckable="True"  IsChecked="{Binding HondaFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Infiniti"  IsCheckable="True"  IsChecked="{Binding InfinitiFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Iveco"  IsCheckable="True"  IsChecked="{Binding IvecoFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Jeep"  IsCheckable="True"  IsChecked="{Binding JeepFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Kia"  IsCheckable="True"  IsChecked="{Binding KiaFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Land Rover"  IsCheckable="True"  IsChecked="{Binding LandRoverFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Lexus"  IsCheckable="True"  IsChecked="{Binding LexusFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Man"  IsCheckable="True"  IsChecked="{Binding ManFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Mazda"  IsCheckable="True"  IsChecked="{Binding MazdaFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Mercedes"  IsCheckable="True"  IsChecked="{Binding MercedesFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Mini"  IsCheckable="True"  IsChecked="{Binding MiniFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Mitsubishi"  IsCheckable="True"  IsChecked="{Binding MitsubishiFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Nissan"  IsCheckable="True"  IsChecked="{Binding NissanFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
+                                <MenuItem Header="Opel"  IsCheckable="True"  IsChecked="{Binding OpelFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Peugeot"  IsCheckable="True"  IsChecked="{Binding PeugeotFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Renault"  IsCheckable="True"  IsChecked="{Binding RenaultFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Seat"  IsCheckable="True"  IsChecked="{Binding SeatFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Skoda"  IsCheckable="True"   IsChecked="{Binding SkodaFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Star"  IsCheckable="True"   IsChecked="{Binding StarFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Toyota" IsCheckable="True"  IsChecked="{Binding ToyotaFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="VW" IsCheckable="True"   IsChecked="{Binding VWFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Volvo" IsCheckable="True"  IsChecked="{Binding VolvoFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <MenuItem Header="Inny" IsCheckable="True"   IsChecked="{Binding InnyFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </MenuItem>
+                        <MenuItem Header="Rodzaj"  >
+                            <MenuItem Header="Osobowe" IsCheckable="True" />
+                            <MenuItem Header="Cięzarowe" IsCheckable="True"/> 
+                        </MenuItem>
+                            <MenuItem Header="Oddział">
+                                <MenuItem Header="CENTRALA" IsCheckable="True" />
+                                <MenuItem Header="Wrocław" IsCheckable="True" />
+                                <MenuItem Header="Żółkiewskiego" IsCheckable="True" />
+                                <MenuItem Header="Gostynin" IsCheckable="True" />
+                                <MenuItem Header="Stryków" IsCheckable="True" />
+                                <MenuItem Header="Bytów" IsCheckable="True" />
+                                <MenuItem Header="Elbląg" IsCheckable="True" />
+                                <MenuItem Header="Koszalin" IsCheckable="True" />
+                                <MenuItem Header="Płońsk" IsCheckable="True" />
+                                <MenuItem Header="Poznań" IsCheckable="True" />
+                                <MenuItem Header="Bydgoszcz" IsCheckable="True" />
+                                <MenuItem Header="Warszawa" IsCheckable="True" />
+                                <MenuItem Header="Mińsk Mazowiecki" IsCheckable="True" />
+                                <MenuItem Header="Kielce" IsCheckable="True" />
+                                <MenuItem Header="Konin" IsCheckable="True" />
+                                <MenuItem Header="Katowice" IsCheckable="True" />
+                                <MenuItem Header="Częstochowa" IsCheckable="True" />
+                                <MenuItem Header="Chojnice" IsCheckable="True" />
+                                <MenuItem Header="Zielona Góra" IsCheckable="True" />
+                                <MenuItem Header="Głogów" IsCheckable="True" />
+                                <MenuItem Header="Grudziądz" IsCheckable="True" />
+                                <MenuItem Header="Rzeszów" IsCheckable="True" />
+                                <MenuItem Header="Tarnobrzeg" IsCheckable="True" />
+                                <MenuItem Header="Stalowa Wola" IsCheckable="True" />
+                                <MenuItem Header="Zamość" IsCheckable="True" />
+                                <MenuItem Header="Gdańsk" IsCheckable="True" />
+
+                            </MenuItem>
+                            <MenuItem Header="GPS">
+                                <MenuItem Header="Tak"/>
+                                <MenuItem Header="Nie"/>
+                            </MenuItem>
+                            <MenuItem Header="Rodzaj paliwa">
+                                <MenuItem Header="Benzyna"/>
+                                <MenuItem Header="Diesel"/>
+                                <MenuItem Header="Benzyna+Gaz"/>
+                            </MenuItem>
+                            
+                            <MenuItem Header="Własny" >
+                                <MenuItem Header="Tak"/>
+                                <MenuItem Header="Nie"/>
+                            </MenuItem>
+                        </MenuItem>
+                        
+
+                    </Menu>
+                       </Border>
+      
+    
+
+
+                        <!--
+                   <Icon:PackIconMaterial Kind="FilterOutline" VerticalAlignment="Center" Width="16" Height="16" Margin="3,3,9,3" />
+                
+                TextBlock Text="Filtruj" VerticalAlignment="Center"/>
+                
+                
+                  <StackPanel Orientation="Horizontal">    
+      <TextBox AcceptsReturn="True"/>
+      <Icon:PackIconMaterial Kind="FilterOutline" VerticalAlignment="Center" Width="16" Height="16" Margin="3,3,9,3" />
+      <TextBlock Text="Filtruj" VerticalAlignment="Center"/>
+  </StackPanel>
+                -->
+            </Button>
+
+            
+        </DockPanel>
+        
+       
+
+
 
         <!-- FILTER SECTION -->
         <StackPanel  Grid.Row="3" HorizontalAlignment="Left" Orientation="Horizontal">
@@ -70,6 +237,8 @@
         </Grid>
      
         
+        
+        
         <!-- =============================== -->
         <!--    MAIN TABLE (non sold cars)   -->
         <!-- =============================== -->
@@ -79,16 +248,134 @@
                    ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
                    RowStyle="{DynamicResource DataGridRowStyle1}" 
                    ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
-                 x:Name="GeneralSectionForActiveCars">
+                   SelectedIndex="{Binding IndexOfDataGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True" HorizontalScrollBarVisibility="Disabled"
+                 x:Name="GeneralSectionForActiveCars" Visibility="Visible">
             <DataGrid.Columns>
-                <DataGridTextColumn  Header="VIN" IsReadOnly="True" Binding="{Binding Vin}" Width="Auto"/>
-                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
-                <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
-                <DataGridTextColumn Header="Rodzaj" IsReadOnly="True" Binding="{Binding CarType}" Width="Auto"/>
-                <DataGridTextColumn Header="Kierowca" IsReadOnly="True"  Binding="{Binding Driver}"  Width="Auto" />
-                <DataGridTextColumn Header="Oddział" IsReadOnly="True" Binding="{Binding BranchName}" Width="Auto" />
-                <DataGridTextColumn Header="Własny" IsReadOnly="True" Binding="{Binding CompanyOwn}" Width="Auto"/>
-                <DataGridTextColumn Header="GPS" IsReadOnly="True" Binding="{Binding GpsMonitoring}" Width="Auto"  />
+              <!--  <DataGridTextColumn  Header="VIN" IsReadOnly="True" Binding="{Binding Vin}" Width="Auto"/> -->
+                <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="*" />
+                <!--   <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding BrandName}" Width="Auto"/>   #2D53DA -->
+                <DataGridTemplateColumn Header="Marka" IsReadOnly="True" Width="*"  >
+                    <DataGridTemplateColumn.CellTemplate >
+                        <DataTemplate  >
+                            <Grid Height="35" HorizontalAlignment="Left"  Margin="0"   >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Background="#2D53DA" CornerRadius="18" Padding="0"  Margin="0 0 5 0"  Height="30" Width="30" HorizontalAlignment="Left" >
+                                    <Grid  >
+                                        <Icon:PackIconSimpleIcons Kind="AlfaRomeo" Style="{StaticResource AlfaRomeoLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Audi" Style="{StaticResource AudiLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Bmw" Style="{StaticResource BmwLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Chevrolet" Style="{StaticResource ChevroletLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Citroen" Style="{StaticResource CitroenLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Daf" Style="{StaticResource DafLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Fiat" Style="{StaticResource FiatLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Ford" Style="{StaticResource FordLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Honda" Style="{StaticResource HondaLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Hyundai" Style="{StaticResource HyundaiLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Infiniti" Style="{StaticResource InfinitiLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Iveco" Style="{StaticResource IvecoLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Jeep" Style="{StaticResource JeepLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Kia" Style="{StaticResource KiaLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="LandRover" Style="{StaticResource LandRoverLogoIconStyle}"  />
+                                        <Image Source="pack://application:,,,/CarIcon/LexusIcon4.png" Style="{StaticResource LexusCarLogoIcon}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Man" Style="{StaticResource ManLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Mazda" Style="{StaticResource MazdaLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Mercedes" Style="{StaticResource MercedesLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Mini" Style="{StaticResource MiniLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Mitsubishi" Style="{StaticResource MitsubishiLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Nissan" Style="{StaticResource NissanLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Opel" Style="{StaticResource OpelLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Peugeot" Style="{StaticResource PeugeotLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Renault" Style="{StaticResource RenaultLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Seat" Style="{StaticResource SeatLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Skoda" Style="{StaticResource SkodaLogoIconStyle}"  />
+                                        <Image Source="pack://application:,,,/CarIcon/StarIcon.png" Style="{StaticResource StarCarLogoIcon}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Toyota" Style="{StaticResource ToyotaLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Volkswagen" Style="{StaticResource VWLogoIconStyle}"  />
+                                        <Icon:PackIconSimpleIcons Kind="Volvo" Style="{StaticResource VolvoLogoIconStyle}"  />
+                                        <!--  <Icon:PackIconSimpleIcons Kind="" Style="{StaticResource StyleCarLogoIcon}"  /> -->
+
+                                        <!--   <Icon:PackIconEntypo Kind="CircleWithCross" x:Name="FalseIcon" Style="{StaticResource FalseGpsIcon}" /> -->
+                                    </Grid>
+                                </Border>
+
+                                <Border Grid.Column="1" Margin="0" Padding="0"   HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding BrandName}"  HorizontalAlignment="Left" />
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Model" IsReadOnly="True" Binding="{Binding BrandModel}" Width="*"/>
+                <DataGridTextColumn Header="Rodzaj" IsReadOnly="True" Binding="{Binding CarType}" Width="*"/>
+                <DataGridTextColumn Header="Kierowca" IsReadOnly="True"  Binding="{Binding Driver}"  Width="*" />
+                <DataGridTextColumn Header="Oddział" IsReadOnly="True" Binding="{Binding BranchName}" Width="*" />
+       
+                <DataGridTemplateColumn Header="Własny" IsReadOnly="True" Width="*" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border  Width="20" Height="20" CornerRadius="10" Background="White" BorderThickness="0">                       
+                            <DockPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Icon:PackIconForkAwesome Kind="CheckCircle" x:Name="TrueIcon" Style="{StaticResource TrueCompanyOwnIcon}"   />
+                                <Icon:PackIconEntypo Kind="CircleWithCross" x:Name="FalseIcon" Style="{StaticResource FalseCompanyOwnIcon}" />
+                            </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="GPS" IsReadOnly="True" Width="*" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border  Width="20" Height="20" CornerRadius="10" Background="White" BorderThickness="0">
+                                <DockPanel  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <DockPanel Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <Icon:PackIconForkAwesome Kind="CheckCircle" x:Name="TrueIcon" Style="{StaticResource TrueGpsIcon}"  />
+                                        <Icon:PackIconEntypo Kind="CircleWithCross" x:Name="FalseIcon" Style="{StaticResource FalseGpsIcon}" />
+                                    </DockPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                
+
+                <!--     <DataGridTextColumn Header="Własny" IsReadOnly="True" Binding="{Binding CompanyOwn}" Width="Auto"/>  -->
+
+                <!--   <DataGridTextColumn Header="GPS" IsReadOnly="True" Binding="{Binding GpsMonitoring}" Width="Auto"  /> 
+                <DataGridTextColumn Header="GPS" IsReadOnly="True" Binding="{Binding GpsMonitoring }" Width="Auto"/>
+                -->
+               
+
+                <DataGridTemplateColumn Header="Operacje" IsReadOnly="True" Width="*" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center"  DataContext="FleetViewModel">
+                                <Border  Style="{StaticResource BorderEditBtn}" Margin="7" >
+                                    <Button Style="{StaticResource OperationsButtonStyle}" ToolTip="Edytuj informacje"
+                                            Command="{Binding DataContext.EditCarParamClicked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" >
+                                      
+                                        <Icon:PackIconZondicons Kind="EditPencil" Foreground="White" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Button>
+                                </Border>
+
+                                <Border Style="{StaticResource BorderRemoveBtn}">
+                                    <Button Style="{StaticResource OperationsButtonStyle}" Command="{Binding ShowTest3}" ToolTip="Zmień status auta, ze stanu aktualnie posiadanego przez firmę, na zbyty.">
+                                        <Icon:PackIconMaterial Kind="DeleteOutline" Foreground="White" Width="14" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    </Button>
+                                </Border>
+                               
+
+                                <!-- <iconPacks:PackIconFeatherIcons Kind="Edit" />
+                                  <Icon:PackIconForkAwesome Kind="CheckCircle" Foreground="Green"  />
+                                -->
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -97,7 +384,7 @@
         <DataGrid Grid.Row="4" Style="{DynamicResource TankSectionForActiveCars}" CellStyle="{DynamicResource DataGridCellStyle1}" 
                   ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
                    RowStyle="{DynamicResource DataGridRowStyle1}" ItemsSource="{Binding DataGridCollectionActiveCars}" Margin="10,10,0,10"  
-                 x:Name="AllCarsTankTableForActiveCars"   >
+                 x:Name="AllCarsTankTableForActiveCars"  >
             <DataGrid.Columns>                
                 <DataGridTextColumn Header="Nr Rej" IsReadOnly="True" Binding="{Binding RegNum}" Width="Auto" />
                 <DataGridTextColumn Header="Marka" IsReadOnly="True" Binding="{Binding Brand}" Width="Auto"/>
@@ -107,7 +394,8 @@
                 <DataGridTextColumn Header="Zużycie paliwa" IsReadOnly="True" Binding="{Binding  FuelConsumptionPer100}" Width="*"/>
                 <DataGridTextColumn Header="Nr karty Orlen" IsReadOnly="True" Binding="{Binding OrlenTankCard }" Width="*"/>
                 <DataGridTextColumn Header="Nr karty BP" IsReadOnly="True" Binding="{Binding OrlenTankCard }" Width="*"/>
-                <DataGridTextColumn Header="kod PIN" IsReadOnly="True" Binding="{Binding PinCode}" Width="Auto"/>               
+                <DataGridTextColumn Header="kod PIN" IsReadOnly="True" Binding="{Binding PinCode}" Width="Auto"/>       
+                
             </DataGrid.Columns>
         </DataGrid>
 

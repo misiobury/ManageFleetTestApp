@@ -3,18 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Icon ="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:local="clr-namespace:Dashboard2"
-             xmlns:local2="clr-namespace:Dashboard2.ViewModel"      
+             xmlns:local2="clr-namespace:Dashboard2.ViewModel"   
+             xmlns:Views="clr-namespace:Dashboard2.View.Fleet"
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
              ShutdownMode="OnMainWindowClose"
- > 
-    
+ >
+
+
+ 
     <Application.Resources>
 
-  <!--   StartupUri=".\View\MainWindow.xaml"  -->
+
+
         <!--*********************************** MAIN GRID *******************************************************-->
 
         <!-- TOP BUTTONS -->
-        <Style x:Key="topButton" TargetType="Button">            
+        <Style x:Key="topButton" TargetType="Button">
             <Setter Property="Foreground" Value="#6e7783"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Width" Value="40" />
@@ -42,7 +46,8 @@
         <!-- ============================================================= -->
         <!--                     ADDED STYLE                               -->
         <!-- ============================================================= -->
-
+        
+        
         <!-- DATAGRID STYLE  (FOR ALL TABLES) -->
         <SolidColorBrush x:Key="{x:Static DataGrid.FocusBorderBrushKey}" Color="#FF000000"/>
 
@@ -73,6 +78,772 @@
         </Style>
 
 
+
+
+        <!-- ********************************-->
+        <!-- COMBOBOX NEW STYLE-->
+        <!-- ********************************-->
+        <Style x:Key="FocusVisual1">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Background" Color="#1F26A0DA"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Border" Color="#A826A0DA"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Background" Color="#2D53DA"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Background" Color="#2D53DA"/>
+        <!-- <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Border" Color="#99006CD9"/> -->
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Border" Color="Transparent"/>
+
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Background" Color="#2D53DA"/>
+
+
+
+
+
+
+
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewFocus.Border" Color="#2D53DA"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Background" Color="CornflowerBlue"/>
+        <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Border" Color="Transparent"/>
+
+
+
+        <Style x:Key="ComboBoxItemContainerStyle1" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Padding" Value="4,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual1}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsKeyboardFocused" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHover.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHover.Border}"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                    <Condition Property="IsMouseOver" Value="False"/>
+                                    <Condition Property="IsKeyboardFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelected.Background}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelected.Border}"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd"  Value="{StaticResource ComboBoxItem.ItemsviewSelectedHover.Background}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedHover.Border}"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                    <Condition Property="IsMouseOver" Value="False"/>
+                                    <Condition Property="IsKeyboardFocused" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedNoFocus.Background}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedNoFocus.Border}"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="False"/>
+                                    <Condition Property="IsKeyboardFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewFocus.Border}"/>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsKeyboardFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHoverFocus.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHoverFocus.Border}"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="TextBox.Static.Background" Color="#FFFFFFFF"/>
+
+        <Style x:Key="ComboBoxEditableTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <ScrollViewer x:Name="PART_ContentHost" Background="Transparent" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="ComboBox.Static.Background" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Glyph" Color="#2D53DA"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Editable.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Editable.Border" Color="#FFABADB3"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Background" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Glyph" Color="#2D53DA"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Border" Color="#FF7EB4EA"/>
+        <LinearGradientBrush x:Key="ComboBox.MouseOver.Editable.Button.Background" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFEBF4FC" Offset="0.0"/>
+            <GradientStop Color="#FFDCECFC" Offset="1.0"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Button.Border" Color="#FF7EB4EA"/>
+        <LinearGradientBrush x:Key="ComboBox.Pressed.Background" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFDAECFC" Offset="0.0"/>
+            <GradientStop Color="#FFC4E0FC" Offset="1.0"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Glyph" Color="#2D53DA"/>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Border" Color="#FF569DE5"/>
+        <LinearGradientBrush x:Key="ComboBox.Pressed.Editable.Button.Background" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFDAEBFC" Offset="0.0"/>
+            <GradientStop Color="#FFC4E0FC" Offset="1.0"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Border" Color="#FF569DE5"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF0F0F0"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFD9D9D9"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FFBFBFBF"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#FFBFBFBF"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="Transparent"/>
+        <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="Transparent"/>
+
+
+        <Style x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="ClickMode" Value="Press"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border x:Name="templateRoot" Background="{StaticResource ComboBox.Static.Background}" BorderBrush="{StaticResource ComboBox.Static.Border}"
+                                BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                            <Border x:Name="splitBorder" BorderBrush="Transparent" BorderThickness="1" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" 
+                                    Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                                <Path x:Name="arrow" Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" 
+                                      Fill="{StaticResource ComboBox.Static.Glyph}" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center"/>
+                            </Border>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="false"/>
+                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Mode=Self}}" Value="false"/>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Static.Editable.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Static.Editable.Border}"/>
+                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.Static.Editable.Button.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.Static.Editable.Button.Border}"/>
+                            </MultiDataTrigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Fill" TargetName="arrow" Value="{StaticResource ComboBox.MouseOver.Glyph}"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="true"/>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Border}"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="true"/>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Editable.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.MouseOver.Editable.Border}"/>
+                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Border}"/>
+                            </MultiDataTrigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Fill" TargetName="arrow" Value="{StaticResource ComboBox.Pressed.Glyph}"/>
+                            </Trigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Mode=Self}}" Value="true"/>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Border}"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Mode=Self}}" Value="true"/>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Editable.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Pressed.Editable.Border}"/>
+                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.Pressed.Editable.Button.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.Pressed.Editable.Button.Border}"/>
+                            </MultiDataTrigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Fill" TargetName="arrow" Value="{StaticResource ComboBox.Disabled.Glyph}"/>
+                            </Trigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="false"/>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="false"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Border}"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="false"/>
+                                    <Condition Binding="{Binding IsEditable, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Editable.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource ComboBox.Disabled.Editable.Border}"/>
+                                <Setter Property="Background" TargetName="splitBorder" Value="{StaticResource ComboBox.Disabled.Editable.Button.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="splitBorder" Value="{StaticResource ComboBox.Disabled.Editable.Button.Border}"/>
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <ControlTemplate x:Key="ComboBoxEditableTemplate" TargetType="{x:Type ComboBox}">
+            <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
+                </Grid.ColumnDefinitions>
+
+                <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource Mode=TemplatedParent}}" Placement="Bottom"
+                       PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
+
+                    <Border CornerRadius="20" BorderThickness="1" x:Name="dropDownBorder" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" 
+                                BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" >
+                        <ScrollViewer x:Name="DropDownScrollViewer">
+                            <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
+                                <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                    <Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" 
+                                                   Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+                                </Canvas>
+                                <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+
+                <ToggleButton x:Name="toggleButton" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                              Grid.ColumnSpan="2" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" Style="{StaticResource ComboBoxToggleButton}"/>
+
+                <Border x:Name="border" Background="{StaticResource TextBox.Static.Background}" Margin="{TemplateBinding BorderThickness}">
+                    <TextBox x:Name="PART_EditableTextBox" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                             IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
+                             Margin="{TemplateBinding Padding}" Style="{StaticResource ComboBoxEditableTextBox}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="true">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+
+                <Trigger Property="HasItems" Value="false">
+                    <Setter Property="Height" TargetName="dropDownBorder" Value="95"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsGrouping" Value="true"/>
+                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                </MultiTrigger>
+                <Trigger Property="ScrollViewer.CanContentScroll" SourceName="DropDownScrollViewer" Value="false">
+                    <Setter Property="Canvas.Top" TargetName="opaqueRect" Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}"/>
+                    <Setter Property="Canvas.Left" TargetName="opaqueRect" Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+
+        <ControlTemplate x:Key="ComboBoxTemplate" TargetType="{x:Type ComboBox}">
+            <Border Background="Transparent" BorderBrush="#2D53DA" BorderThickness="2" CornerRadius="6">
+                <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Width="0"/>
+                    </Grid.ColumnDefinitions>
+                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                       Margin="1" Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
+                        <theme:SystemDropShadowChrome x:Name="shadow" Color="Transparent" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                            <!-- main border of combobox -->
+                            <Border x:Name="dropDownBorder" Background="White" BorderBrush="#2D53DA" BorderThickness="2" CornerRadius="10" Padding="4" Margin="3">
+                                <ScrollViewer x:Name="DropDownScrollViewer"  >
+                                    <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
+                                        <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                            <Rectangle x:Name="opaqueRect" Fill="Transparent"  Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
+                                        </Canvas>
+                                        <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Grid>
+                                </ScrollViewer>
+                            </Border>
+                        </theme:SystemDropShadowChrome>
+                    </Popup>
+                    <ToggleButton x:Name="toggleButton" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="2" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" Style="{StaticResource ComboBoxToggleButton}"/>
+                    <ContentPresenter x:Name="contentPresenter" ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                  Content="{TemplateBinding SelectionBoxItem}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                  IsHitTestVisible="false" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
+                    <Setter Property="Margin"  Value="0,0,5,5"/>
+
+                </Trigger>
+                <Trigger Property="HasItems" Value="false">
+                    <Setter Property="Height" TargetName="dropDownBorder" Value="95"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsGrouping" Value="true"/>
+                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                </MultiTrigger>
+                <Trigger Property="ScrollViewer.CanContentScroll" SourceName="DropDownScrollViewer" Value="false">
+                    <Setter Property="Canvas.Top" TargetName="opaqueRect" Value="{Binding VerticalOffset, ElementName=DropDownScrollViewer}"/>
+                    <Setter Property="Canvas.Left" TargetName="opaqueRect" Value="{Binding HorizontalOffset, ElementName=DropDownScrollViewer}"/>
+
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+
+        <Style x:Key="ComboBoxStyle1" TargetType="{x:Type ComboBox}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource ComboBox.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ComboBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Padding" Value="6,3,5,3"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template" Value="{StaticResource ComboBoxTemplate}"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsEditable" Value="true">
+                    <Setter Property="IsTabStop" Value="false"/>
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="Template" Value="{StaticResource ComboBoxEditableTemplate}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="ComboBoxOwnStyle" BasedOn="{StaticResource ComboBoxStyle1}" TargetType="ComboBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Width" Value="95"/>
+            <Setter Property="Height" Value="32"/>
+        </Style>
+
+
+
+
+        <!-- ********************************-->
+        <!-- CALENDAR NEW STYLE-->
+        <!-- ********************************-->
+
+        <Style x:Key="CalendarStyle1" TargetType="{x:Type Calendar}">
+            <Setter Property="Foreground" Value="#FF333333"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2D53DA"/>
+            <Setter Property="BorderThickness" Value="0"/>
+
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Calendar}">
+                        <!--   <Border x:Name="PART_Root" HorizontalAlignment="Center" BorderBrush="Green" BorderThickness="2" CornerRadius="20"  >
+                   -->
+                        <StackPanel x:Name="PART_Root" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <CalendarItem x:Name="PART_CalendarItem" Background="Transparent" BorderBrush="Transparent" BorderThickness="0"
+                                          Style="{TemplateBinding CalendarItemStyle}"/>
+                        </StackPanel>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <Style x:Key="CalendarCalendarItemStyle1" TargetType="{x:Type CalendarItem}">
+            <Setter Property="Margin" Value="0,3,0,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <!-- day of week name -->
+                    <ControlTemplate TargetType="{x:Type CalendarItem}">
+                        <ControlTemplate.Resources>
+                            <DataTemplate x:Key="{x:Static CalendarItem.DayTitleTemplateResourceKey}">
+                                <TextBlock Foreground="#FF333333" FontFamily="Verdana" FontWeight="Bold" FontSize="8" HorizontalAlignment="Center" Margin="0,6,0,6" Text="{Binding}" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </ControlTemplate.Resources>
+
+                        <Grid x:Name="PART_Root">
+                            <Grid.Resources>
+                                <SolidColorBrush x:Key="DisabledColor" Color="#A5FFFFFF"/>
+                            </Grid.Resources>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="PART_DisabledVisual" To="1" Storyboard.TargetProperty="Opacity"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Border Background="{TemplateBinding Background}" Height="150" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="1">
+                                <Border  BorderThickness="2" CornerRadius="10" BorderBrush="#2D53DA" >
+                                    <Grid>
+                                        <Grid.Resources>
+
+                                            <ControlTemplate x:Key="PreviousButtonTemplate" TargetType="{x:Type Button}">
+                                                <Grid Cursor="Hand">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="MouseOver">
+                                                                <Storyboard>
+                                                                    <ColorAnimation Duration="0" Storyboard.TargetName="path" To="#FF73A9D8" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Disabled">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0" Storyboard.TargetName="path" To=".5" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <Rectangle Fill="#11E5EBF1" Opacity="1" Stretch="Fill"/>
+                                                    <Border CornerRadius="10" BorderThickness="1" BorderBrush="AliceBlue">
+                                                        <Grid>
+                                                            <Path x:Name="path" Data="M288.75,232.25 L288.75,240.625 L283,236.625 z" Fill="#FF333333" HorizontalAlignment="Left" Height="10" Margin="14,-6,0,0" Stretch="Fill" VerticalAlignment="Center" Width="6"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+
+                                            <ControlTemplate x:Key="NextButtonTemplate" TargetType="{x:Type Button}">
+                                                <Grid Cursor="Hand">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="MouseOver">
+                                                                <Storyboard>
+                                                                    <ColorAnimation Duration="0" Storyboard.TargetName="path" To="#2D53DA" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Disabled">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0" Storyboard.TargetName="path" To=".5" Storyboard.TargetProperty="(Shape.Fill).(Brush.Opacity)"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <Rectangle Fill="#11E5EBF1" Opacity="1" Stretch="Fill"/>
+                                                    <Grid>
+                                                        <Path x:Name="path" Data="M282.875,231.875 L282.875,240.375 L288.625,236 z" Fill="#FF333333" HorizontalAlignment="Right" Height="10" Margin="0,-6,14,0" Stretch="Fill" VerticalAlignment="Center" Width="6"/>
+                                                    </Grid>
+                                                </Grid>
+
+                                            </ControlTemplate>
+                                            <ControlTemplate x:Key="HeaderButtonTemplate" TargetType="{x:Type Button}">
+                                                <Grid Cursor="Hand">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="MouseOver">
+                                                                <Storyboard>
+                                                                    <ColorAnimation Duration="0" Storyboard.TargetName="buttonContent" To="#FF73A9D8" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Disabled">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0" Storyboard.TargetName="buttonContent" To=".5" Storyboard.TargetProperty="Opacity"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <ContentPresenter x:Name="buttonContent" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" TextElement.Foreground="#FF333333" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="1,4,1,9" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Grid>
+                                            </ControlTemplate>
+
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Button x:Name="PART_PreviousButton" Grid.Column="0" Focusable="False" HorizontalAlignment="Left" Height="20" Grid.Row="0" Template="{StaticResource PreviousButtonTemplate}" Width="28"/>
+                                        <Button x:Name="PART_HeaderButton" Grid.Column="1" Focusable="False" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Center" Grid.Row="0" Template="{StaticResource HeaderButtonTemplate}" VerticalAlignment="Center"/>
+                                        <Button x:Name="PART_NextButton" Grid.Column="2" Focusable="False" HorizontalAlignment="Right" Height="20" Grid.Row="0" Template="{StaticResource NextButtonTemplate}" Width="28"/>
+
+                                        <Grid x:Name="PART_MonthView" Grid.ColumnSpan="3" HorizontalAlignment="Center" Margin="6,-1,6,6" Grid.Row="1" Visibility="Visible">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                        </Grid>
+                                        <Grid x:Name="PART_YearView" Grid.ColumnSpan="3" HorizontalAlignment="Center" Margin="6,-3,7,6" Grid.Row="1" Visibility="Hidden">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <Rectangle x:Name="PART_DisabledVisual" Fill="{StaticResource DisabledColor}" Opacity="0" RadiusX="2" RadiusY="2" Stroke="{StaticResource DisabledColor}"
+                                       Stretch="Fill" StrokeThickness="1" Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Visibility" TargetName="PART_DisabledVisual" Value="Visible"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}" Value="Year">
+                                <Setter Property="Visibility" TargetName="PART_MonthView" Value="Hidden"/>
+                                <Setter Property="Visibility" TargetName="PART_YearView" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}" Value="Decade">
+                                <Setter Property="Visibility" TargetName="PART_MonthView" Value="Hidden"/>
+                                <Setter Property="Visibility" TargetName="PART_YearView" Value="Visible"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+        <Style x:Key="CalendarCalendarDayButtonStyle1" TargetType="{x:Type CalendarDayButton}">
+            <Setter Property="MinWidth" Value="5"/>
+            <Setter Property="MinHeight" Value="5"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CalendarDayButton}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0:0:0.1"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="HighlightBackground" To="0.5" Storyboard.TargetProperty="Opacity"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="HighlightBackground" To="0.5" Storyboard.TargetProperty="Opacity"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="HighlightBackground" To="0" Storyboard.TargetProperty="Opacity"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="NormalText" To=".35" Storyboard.TargetProperty="Opacity"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Unselected"/>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="SelectedBackground" To=".75" Storyboard.TargetProperty="Opacity"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CalendarButtonFocusStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="CalendarButtonFocused">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="DayButtonFocusVisual" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CalendarButtonUnfocused">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="DayButtonFocusVisual" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Collapsed</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Active"/>
+                                    <VisualState x:Name="Inactive">
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0" Storyboard.TargetName="NormalText" To="#FF777777" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DayStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="RegularDay"/>
+                                    <VisualState x:Name="Today">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="TodayBackground" To="1" Storyboard.TargetProperty="Opacity"/>
+                                            <ColorAnimation Duration="0" Storyboard.TargetName="NormalText" To="#FFFFFFFF" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="BlackoutDayStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="NormalDay"/>
+                                    <VisualState x:Name="BlackoutDay">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="Blackout" To=".2" Storyboard.TargetProperty="Opacity"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="TodayBackground" Fill="#2D53DA" Opacity="0" RadiusX="8" RadiusY="10"/>
+                            <Rectangle x:Name="SelectedBackground" Fill="CornflowerBlue" Opacity="0" RadiusX="8" RadiusY="10"/>
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <Rectangle x:Name="HighlightBackground" Fill="CornflowerBlue" Opacity="0" RadiusX="8" RadiusY="10"/>
+                            <ContentPresenter x:Name="NormalText" TextElement.Foreground="#FF333333" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="5,1,5,1" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Path x:Name="Blackout" Data="M8.1772461,11.029181 L10.433105,11.029181 L11.700684,12.801641 L12.973633,11.029181 L15.191895,11.029181 L12.844727,13.999395 L15.21875,17.060919 L12.962891,17.060919 L11.673828,15.256231 L10.352539,17.060919 L8.1396484,17.060919 L10.519043,14.042364 z" Fill="#FF000000" HorizontalAlignment="Stretch" Margin="3" Opacity="0" RenderTransformOrigin="0.5,0.5" Stretch="Fill" VerticalAlignment="Stretch"/>
+                            <Rectangle x:Name="DayButtonFocusVisual" IsHitTestVisible="false" RadiusX="8" RadiusY="10" Stroke="Transparent" Visibility="Collapsed"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+
+
+
+
+        <!-- ****************************************************  -->
+        <!-- DATAGRID STYLE -->
+        <!-- ****************************************************  -->
         <Style x:Key="DataGridStyle1" TargetType="{x:Type DataGrid}">
             <Setter Property="Background" Value="#EDF2FF"/>
             <Setter Property="Foreground" Value="Black"/>
@@ -223,7 +994,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type DataGridRow}">
-                        <Border x:Name="DGR_Border" Padding="0 8" Background="{TemplateBinding Background}"  BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
+                        <Border x:Name="DGR_Border" Padding="0 4" Background="{TemplateBinding Background}"  BorderThickness="1" CornerRadius="5" SnapsToDevicePixels="True">
                             <SelectiveScrollingGrid>
                                 <SelectiveScrollingGrid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -243,7 +1014,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger  Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#2D53DA"/>
+                    <Setter Property="Background" Value="CornflowerBlue"/>
                     <Setter Property="Foreground" Value="#EDF2FF"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
@@ -265,6 +1036,11 @@
 
             </Style.Triggers>
         </Style>
+
+
+
+
+
 
 
         <!-- DATAGRID STYLE (FLEET PAGE - IN-USE CARS) -->
@@ -387,7 +1163,7 @@
             <Setter Property="FontSize" Value="60"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-           
+
         </Style>
 
         <Style x:Key="TextblockSecondContentOfSquare" TargetType="TextBlock">
@@ -464,7 +1240,7 @@
         <!-- ============================================================= -->
         <!--                       MAIN MENU                               -->
         <!-- ============================================================= -->
-        
+
         <!-- BORDER BTN MAIN MENU-->
         <Style x:Key="BorderMenuButton" TargetType="Border">
             <Setter Property="Background" Value="Transparent"/>
@@ -484,8 +1260,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
-         <Style x:Key="BorderViasatBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
+
+        <Style x:Key="BorderViasatBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="ViasatPage">
                     <Setter Property="Background" Value="White"/>
@@ -496,7 +1272,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="BorderFleetBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="FleetPage">
@@ -508,7 +1284,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="BorderDriversBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="DriversPage">
@@ -532,7 +1308,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="BorderSettingsBtn" TargetType="Border" BasedOn="{StaticResource BorderMenuButton}">
             <Setter Property="Background" Value="Transparent"/>
             <Style.Triggers>
@@ -542,7 +1318,7 @@
                 <Trigger Property="Border.IsMouseOver" Value="True">
                     <Setter Property="Cursor" Value="Hand"/>
                     <Setter Property="Background" Value="CornflowerBlue"/>
-                </Trigger>      
+                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -553,7 +1329,7 @@
                     <Setter Property="Background" Value="#1DCEF5" />
                     <Setter Property="Cursor" Value="Hand" />
                 </Trigger>
-                
+
 
             </Style.Triggers>
         </Style>
@@ -561,7 +1337,7 @@
 
         <!-- BUTTON MAIN MENU -->
         <Style x:Key="MainMenuButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />            
+            <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="DockPanel.Dock" Value="Top"/>
@@ -573,7 +1349,7 @@
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
-            </Setter>           
+            </Setter>
         </Style>
 
         <Style x:Key="MainMenuExitButtonStyle" TargetType="Button">
@@ -595,7 +1371,7 @@
 
 
 
-      
+
         <!-- TEXT BLOCK IN MAIN MENU BTN  -->
         <Style x:Key="MainMenuBtnTextBlock" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
@@ -604,30 +1380,30 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="15"/>
         </Style>
-        
+
 
         <Style x:Key="StartBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
             <Style.Triggers>
                 <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StartPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
                     <Setter Property="FontSize" Value="16"/>
-                    <Setter Property="FontFamily" Value="Segoe UI Black"/>                   
+                    <Setter Property="FontFamily" Value="Segoe UI Black"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        
-        
+
+
         <Style x:Key="ViasatBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
             <Style.Triggers>
-                        <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="ViasatPage">
+                <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="ViasatPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
                     <Setter Property="FontSize" Value="16"/>
                     <Setter Property="FontFamily" Value="Segoe UI Black"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        
-        
+
+
         <Style x:Key="FleetBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
             <Style.Triggers>
                 <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="FleetPage">
@@ -638,7 +1414,7 @@
             </Style.Triggers>
         </Style>
 
-         <Style x:Key="DriversBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+        <Style x:Key="DriversBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
             <Style.Triggers>
                 <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="DriversPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -658,7 +1434,7 @@
             </Style.Triggers>
         </Style>
 
-         <Style x:Key="SettingsBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
+        <Style x:Key="SettingsBtnTextBlockTrigger" TargetType="TextBlock" BasedOn="{StaticResource MainMenuBtnTextBlock }">
             <Style.Triggers>
                 <DataTrigger  Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="SettingsPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -669,7 +1445,7 @@
         </Style>
 
 
-        
+
         <Style x:Key="HomeBtnMainMenuIcon" TargetType="Icon:PackIconUnicons">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -715,7 +1491,7 @@
             <Setter Property="Height" Value="22"/>
             <Setter Property="Margin" Value="8"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="FleetPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -734,7 +1510,7 @@
             <Setter Property="Height" Value="22"/>
             <Setter Property="Margin" Value="8"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="DriversPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -753,7 +1529,7 @@
             <Setter Property="Height" Value="22"/>
             <Setter Property="Margin" Value="8"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="StatisticsPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -772,7 +1548,7 @@
             <Setter Property="Height" Value="22"/>
             <Setter Property="Margin" Value="8"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path=SelectedPageName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="SettingsPage">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -791,7 +1567,7 @@
             <Setter Property="Height" Value="20"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/> 
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="#2D53DA"/>
@@ -811,24 +1587,24 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="LimeGreen"/>
         </Style>
-        
-        
+
+
         <Style x:Key="BorderNotification" TargetType="Border">
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="15"/>
             <Setter Property="Background" Value="White"/>
-           <!-- <Setter Property="Width" Value="240"/>  -->
+            <!-- <Setter Property="Width" Value="240"/>  -->
             <Setter Property="MinWidth" Value="250"/>
             <Setter Property="Padding" Value="3 0 25 0"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="Margin" Value="0 0 90 0"/>
-            <Setter Property="Visibility" Value="Collapsed"/>            
+            <Setter Property="Visibility" Value="Collapsed"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Path= IsNotificationActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                     <Setter Property="Visibility" Value="Visible"/>
                 </DataTrigger>
-              
+
             </Style.Triggers>
         </Style>
 
@@ -847,12 +1623,13 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        
-        
+
+
+
         <!-- ============================================================= -->
         <!--                      PAGES                                    -->
         <!-- ============================================================= -->
-       
+
         <!-- CONTENT PAGE -->
         <Style x:Key="PageTitleTextBlock" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,20,0,0"/>
@@ -862,11 +1639,24 @@
             <Setter Property="Foreground" Value="Black"/>
         </Style>
 
-       
-               
 
-        <!-- FLEET PAGE -->
-        <Style x:Key="AddButton" TargetType="Button">
+
+
+
+
+        <!-- ************************** -->
+        <!--        VIASAT PAGE         -->
+        <!-- ************************** -->
+
+        <Style x:Key="ViasatPageRectangleBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="7"/>
+        </Style>
+
+        <Style x:Key="ShowSummaryButton" TargetType="Button">
             <Setter Property="Background" Value="#2D53DA"/>
             <Setter Property="Foreground" Value="#ffffff"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -886,12 +1676,635 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
+                    <!--    <Setter Property="Background" Value="#ffffff"/>  -->
+                    <Setter Property="Background" Value="DarkBlue"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- VIASAT PAGE SQUARES -->
+        <Style x:Key="ViasatSquareBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Margin" Value="13"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <Style x:Key="ViasatBlueSquareHeader" TargetType="Border">
+            <Setter Property="Background" Value="#2D53DA"/>
+            <Setter Property="BorderThickness" Value="22 10 18 0"/>
+            <Setter Property="CornerRadius" Value="12"/>
+        </Style>
+
+        <Style x:Key="ViasatHeaderUnderline" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="0,0,0,3"/>
+            <Setter Property="Margin" Value="0,0,30,0"/>
+        </Style>
+
+        <Style x:Key="ViasatTextblockMainTitle" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+
+        </Style>
+
+        <Style x:Key="ViasatTextblockSecondTitle" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="8,0,2,0"/>
+            <Setter Property="FontSize" Value="7"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+
+        </Style>
+
+        <Style x:Key="ViasatTextblockContentOfSquare" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="26,1,1,19"/>
+            <Setter Property="FontSize" Value="60"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+
+        </Style>
+
+        <Style x:Key="ViasatTextblockSecondContentOfSquare" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="2,20,0,0"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+
+
+
+
+
+
+
+
+        <!-- ************************** -->
+        <!--        FLEET PAGE          -->
+        <!-- ************************** -->
+
+
+
+
+        <DataTemplate x:Key="MenuItemItemTemplate1">
+                <Grid/>
+            </DataTemplate>
+            <SolidColorBrush x:Key="Menu.Static.Background" Color="White"/>
+        <SolidColorBrush x:Key="Menu.Static.Border" Color="#2D53DA"/>
+            <SolidColorBrush x:Key="Menu.Static.Foreground" Color="#FF212121"/>
+            <SolidColorBrush x:Key="Menu.Static.Separator" Color="#FFD7D7D7"/>
+            <SolidColorBrush x:Key="Menu.Disabled.Foreground" Color="#FF707070"/>
+            <SolidColorBrush x:Key="MenuItem.Selected.Background" Color="#3D26A0DA"/>
+            <SolidColorBrush x:Key="MenuItem.Selected.Border" Color="#FF26A0DA"/>
+            <SolidColorBrush x:Key="MenuItem.Highlight.Background" Color="CornflowerBlue"/>
+            <SolidColorBrush x:Key="MenuItem.Highlight.Border" Color="#FF26A0DA"/>
+            <SolidColorBrush x:Key="MenuItem.Highlight.Disabled.Background" Color="#0A000000"/>
+            <SolidColorBrush x:Key="MenuItem.Highlight.Disabled.Border" Color="#21000000"/>
+            <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter"/>
+            <Geometry x:Key="DownArrow">M 0,0 L 3.5,4 L 7,0 Z</Geometry>
+            <Geometry x:Key="UpArrow">M 0,4 L 3.5,0 L 7,4 Z</Geometry>
+            <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
+            <Geometry x:Key="Checkmark">F1 M 10.0,1.2 L 4.7,9.1 L 4.5,9.1 L 0,5.2 L 1.3,3.5 L 4.3,6.1L 8.3,0 L 10.0,1.2 Z</Geometry>
+        <Geometry x:Key="Checkmark2">M 38,19C 48.4934,19 57,27.5066 57,38C 57,48.4934 48.4934,57 38,57C 27.5066,57 19,48.4934 19,38C 19,27.5066 27.5066,19 38,19 Z M 38,23.75C 35.2116,23.75 32.6102,24.5509 30.4134,25.9352L 50.0648,45.5866C 51.4491,43.3898 52.25,40.7884 52.25,38C 52.25,30.13 45.87,23.75 38,23.75 Z M 23.75,38C 23.75,45.8701 30.1299,52.25 38,52.25C 40.7884,52.25 43.3897,51.4491 45.5865,50.0649L 25.9351,30.4136C 24.5509,32.6103 23.75,35.2117 23.75,38 Z</Geometry>
+        
+        <Style x:Key="MenuScrollButton" BasedOn="{x:Null}" TargetType="{x:Type RepeatButton}">
+                <Setter Property="ClickMode" Value="Hover"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border x:Name="templateRoot" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="Center" Margin="6" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        
+        <Style x:Key="{ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}" BasedOn="{x:Null}" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid SnapsToDevicePixels="true">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Column="0" Grid.Row="1">
+                                <ScrollContentPresenter CanContentScroll="{TemplateBinding CanContentScroll}" Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                            <RepeatButton Command="{x:Static ScrollBar.LineUpCommand}" CommandTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}" Grid.Column="0" Focusable="false" Grid.Row="0" Style="{StaticResource MenuScrollButton}">
+                                <RepeatButton.Visibility>
+                                    <MultiBinding ConverterParameter="0" Converter="{StaticResource MenuScrollingVisibilityConverter}" FallbackValue="Visibility.Collapsed">
+                                        <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                        <Binding Path="VerticalOffset" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                        <Binding Path="ExtentHeight" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                        <Binding Path="ViewportHeight" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                    </MultiBinding>
+                                </RepeatButton.Visibility>
+                                <Path Data="{StaticResource UpArrow}" Fill="{StaticResource Menu.Static.Foreground}"/>
+                            </RepeatButton>
+                            <RepeatButton Command="{x:Static ScrollBar.LineDownCommand}" CommandTarget="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}" Grid.Column="0" Focusable="false" Grid.Row="2" Style="{StaticResource MenuScrollButton}">
+                                <RepeatButton.Visibility>
+                                    <MultiBinding ConverterParameter="100" Converter="{StaticResource MenuScrollingVisibilityConverter}" FallbackValue="Visibility.Collapsed">
+                                        <Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                        <Binding Path="VerticalOffset" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                        <Binding Path="ExtentHeight" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                        <Binding Path="ViewportHeight" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                    </MultiBinding>
+                                </RepeatButton.Visibility>
+                                <Path Data="{StaticResource DownArrow}" Fill="{StaticResource Menu.Static.Foreground}"/>
+                            </RepeatButton>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Path x:Name="GlyphPanel" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Foreground}" Margin="3" VerticalAlignment="Center" Visibility="Collapsed"/>
+                    <ContentPresenter ContentSource="Header"  Grid.Column="1" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="GlyphPanel" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsHighlighted" Value="True"/>
+                        <Condition Property="IsEnabled" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Border}"/>
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+       
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="Transparent"  BorderBrush="Transparent" BorderThickness="1" CornerRadius="10"
+                    SnapsToDevicePixels="true" >
+                <Grid VerticalAlignment="Center" Background="Transparent">
+
+                    <!--    Background="#2D53DA"
+                    <ContentPresenter  x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Margin="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" />
+                    <Path x:Name="GlyphPanel"  Data="{StaticResource Checkmark}" FlowDirection="RightToLeft" Fill="Red"  Margin="1" VerticalAlignment="Center" Visibility="Collapsed"/> 
+                    <ContentPresenter Grid.Column="0" ContentSource="{Binding PackIconZondicons, ElementName=Cancel}" Height="15" Width="15" Visibility="Visible"  />-->
+                    
+                  <!--  <ContentPresenter ContentSource="Header" Grid.Column="1"  Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"> -->
+                    <DockPanel Background="Transparent">
+
+                        <Icon:PackIconMaterial Kind="FilterOutline" Foreground="White" x:Name="Icon2" HorizontalAlignment="Center" Margin="7 0 0 0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" />
+                         <TextBlock Text="Filtruj" FontSize="14" Foreground="White" HorizontalAlignment="Center" Margin="0 0 3 0"  />
+                    </DockPanel>  
+  
+                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false"  IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource Mode=TemplatedParent}}"  Placement="Left" 
+                           PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" PlacementTarget="{Binding ElementName=templateRoot}" >
+                        <Border x:Name="SubMenuBorder" Background="{StaticResource Menu.Static.Background}" BorderBrush="{StaticResource Menu.Static.Border}"   
+                                CornerRadius="10" BorderThickness="2" Padding="8"  >
+                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                <Grid RenderOptions.ClearTypeHint="Enabled" >
+                                    <Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                        <Rectangle x:Name="OpaqueRect" Fill="Transparent" Margin="20" Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+                                    </Canvas>
+                                    <Rectangle Fill="{StaticResource Menu.Static.Separator}" HorizontalAlignment="Left" Margin="29,2,0,2" Width="1"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSuspendingPopupAnimation" Value="true">
+                    <Setter Property="PopupAnimation" TargetName="PART_Popup" Value="None"/>
+                    
+                </Trigger>
+                <Trigger Property="Icon" Value="{x:Null}">
+          <!--          <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>  
+                    
+                    -->
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+            <!--        <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>  -->
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                   <!-- <Setter Property="Background" TargetName="templateRoot" Value="green"/> --> 
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                  <!--  <Setter Property="Fill" TargetName="GlyphPanel" Value="{StaticResource Menu.Disabled.Foreground}"/> -->
+                </Trigger>
+                <Trigger Property="ScrollViewer.CanContentScroll" SourceName="SubMenuScrollViewer" Value="false">
+                    <Setter Property="Canvas.Top" TargetName="OpaqueRect" Value="{Binding VerticalOffset, ElementName=SubMenuScrollViewer}"/>
+                    <Setter Property="Canvas.Left" TargetName="OpaqueRect" Value="{Binding HorizontalOffset, ElementName=SubMenuScrollViewer}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+       
+        
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="Transparent" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="8" BorderThickness="1" Height="22" SnapsToDevicePixels="true">
+                <Grid Margin="-1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="22" SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="13"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition SharedSizeGroup="MenuItemIGTColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Border x:Name="GlyphPanel" Background="{StaticResource MenuItem.Selected.Background}" BorderBrush="{StaticResource MenuItem.Selected.Border}" BorderThickness="1" ClipToBounds="False" HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0" VerticalAlignment="Center" Visibility="Hidden" Width="22">
+                        <Path x:Name="Glyph" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Foreground}" Height="11" Width="10"/>
+                    </Border>
+                   
+                    <TextBlock x:Name="menuHeaderTextBlock" Foreground="Black" Grid.Column="2"  VerticalAlignment="Center" FontSize="14" Margin="0" Background="Transparent" >
+                          <ContentPresenter x:Name="menuHeaderContainer" ContentSource="Header"  HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+
+                    </TextBlock>
+                    
+                    <TextBlock x:Name="menuGestureText" Grid.Column="4"  Margin="{TemplateBinding Padding}" Opacity="0.7" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="#2D53DA"/>
+               <!--     <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/> -->
+                    <Setter Property="Foreground" TargetName="menuHeaderTextBlock" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="Glyph" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsHighlighted" Value="True"/>
+                        <Condition Property="IsEnabled" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Border}"/>
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        
+        
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="Transparent" BorderBrush="White" CornerRadius="8" BorderThickness="1" Height="22" SnapsToDevicePixels="true">
+                <Grid Margin="-1 -9 -1 -9">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="22" SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="13"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition SharedSizeGroup="MenuItemIGTColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Border x:Name="GlyphPanel" Background="{StaticResource MenuItem.Highlight.Background}" BorderBrush="{StaticResource MenuItem.Highlight.Border}" BorderThickness="1" Height="22" Margin="-1,0,0,0" VerticalAlignment="Center" Visibility="Hidden" Width="22">
+                        <Path x:Name="Glyph" Data="{DynamicResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Foreground}" Height="11" Width="9"/>
+                    </Border>
+
+                    <TextBlock x:Name="menuHeaderTextBlock" Foreground="Black" Grid.Column="2"  VerticalAlignment="Center" FontSize="14" Margin="0" >
+                         <ContentPresenter ContentSource="Header" Grid.Column="2" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                    </TextBlock>
+
+                    <TextBlock Grid.Column="4" Margin="{TemplateBinding Padding}" Opacity="0.7" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center"/>
+                    <Path x:Name="RightArrow" Grid.Column="5" Data="{StaticResource RightArrow}" Fill="{StaticResource Menu.Static.Foreground}" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
+
+                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false" HorizontalOffset="-2"  Margin="20" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
+                           Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" VerticalOffset="-3">
+                        <Border x:Name="SubMenuBorder" Background="{StaticResource Menu.Static.Background}" BorderBrush="{StaticResource Menu.Static.Border}" BorderThickness="2" Padding="8"
+                                 CornerRadius="10"   Margin="20"
+                                >
+                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                <Grid RenderOptions.ClearTypeHint="Enabled">
+                                    <Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                        <Rectangle x:Name="OpaqueRect" Fill="{Binding Background, ElementName=SubMenuBorder}" Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+                                    </Canvas>
+                                    <Rectangle Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" HorizontalAlignment="Left" Margin="29,2,0,2" Width="1"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSuspendingPopupAnimation" Value="true">
+                    <Setter Property="PopupAnimation" TargetName="PART_Popup" Value="None"/>
+                </Trigger>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="#2D53DA"/>
+                  <!--  <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>  -->
+                    <Setter Property="Foreground" TargetName="menuHeaderTextBlock" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="Glyph" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="RightArrow" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                </Trigger>
+                <Trigger Property="ScrollViewer.CanContentScroll" SourceName="SubMenuScrollViewer" Value="false">
+                    <Setter Property="Canvas.Top" TargetName="OpaqueRect" Value="{Binding VerticalOffset, ElementName=SubMenuScrollViewer}"/>
+                    <Setter Property="Canvas.Left" TargetName="OpaqueRect" Value="{Binding HorizontalOffset, ElementName=SubMenuScrollViewer}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        
+        <Style x:Key="MenuItemContainerStyle1" TargetType="{x:Type MenuItem}">
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}"/>
+            <Style.Triggers>
+                <Trigger Property="Role" Value="TopLevelHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{StaticResource Menu.Static.Foreground}"/>
+                    <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}"/>
+                    <Setter Property="Padding" Value="6,0"/>
+                </Trigger>
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Background" Value="{StaticResource Menu.Static.Background}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Menu.Static.Border}"/>
+                    <Setter Property="Foreground" Value="{StaticResource Menu.Static.Foreground}"/>
+                    <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}"/>
+                    <Setter Property="Padding" Value="6,0"/>
+                </Trigger>
+                <Trigger Property="Role" Value="SubmenuHeader">
+                    <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey ResourceId=SubmenuHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        <Style x:Key="MenuStyle1" TargetType="{x:Type Menu}">
+            <Setter Property="Background" Value="{StaticResource Menu.Static.Background}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}"/>
+            <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}"/>
+            <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}"/>
+            <Setter Property="FontWeight" Value="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Menu}">
+                        <StackPanel Orientation="Horizontal">
+                            <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="18" Height="18" Margin="3,3,9,3" />
+                           
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </StackPanel>
+                       
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+         <!--   <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Menu}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                                Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter> -->
+        </Style>
+
+        
+        
+        <Style x:Key="AddButton" TargetType="Button">
+            <Setter Property="Background" Value="#2D53DA"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Width" Value="170" />
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0 20 0 0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="CornflowerBlue"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="EditButton" TargetType="Button">
+            <Setter Property="Background" Value="#2D53DA"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Width" Value="85" />
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0 0 0 0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="9" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="CornflowerBlue"/>
+                    <Setter Property="Foreground" Value="#2D53DA"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- FILTER LABEL -->
+        <Style x:Key="FilterLabelBorder" TargetType="Border">
+            <Setter Property="Background" Value="#ffffff"/>            
+            <Setter Property="Width" Value="130" />
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Margin" Value="5 0 0 0"/>
+            <Setter Property="CornerRadius" Value="7"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+        
+
+        <Style x:Key="BrandFilterBorder" TargetType="Border" BasedOn="{StaticResource FilterLabelBorder}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandCarFilterIsOn, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+              
+            </Style.Triggers>
+            
+        </Style>
+        
+<!-- *********************************************************************************************************************** -->
+        <Style x:Key="DeleteFilterButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>     
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#2D53DA"/>          
+            <Setter Property="Width" Value="29" />
+            <Setter Property="Height" Value="29"/>
+            <Setter Property="Margin" Value="0"/>           
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="White" >
+                            <Icon:PackIconMaterial x:Name="Icon2" Kind="CloseBox" HorizontalAlignment="Center" VerticalAlignment="Center"  Width="21" Height="21" Margin="0"  />
+                           
+                        </Border>                            
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter  Property="Foreground" Value="CornflowerBlue"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        
+        
+        
+
+        <Style x:Key="FilterButton" TargetType="Button">
+            <Setter Property="Foreground" Value="#2D53DA"/>
+            <Setter Property="Background" Value="#ffffff"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Width" Value="125" />
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Margin" Value="5 0 0 0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="7" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#ffffff"/>
                     <Setter Property="Foreground" Value="#2D53DA"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+
+        <Style x:Key="MenuItemTrigger2" TargetType="MenuItem">          
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition  Binding="{Binding BrandCarFilterIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="false"/>
+                      
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        
+      
+
+
+        <Style x:Key="dockstyle" TargetType="DockPanel">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding OpelFilterIsOn, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="false">
+                   
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        
+        
+        
+        <!-- TAB BUTTON -->
 
         <Style x:Key="TabButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -914,19 +2327,19 @@
                 </Setter.Value>
             </Setter>
 
-            <Style.Triggers>              
+            <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderBrush" Value="#2D53DA"/>
                     <Setter Property="Cursor" Value="Hand"/>
                 </Trigger>
-                           
-            </Style.Triggers>              
+
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="GeneralSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsGeneralTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
-                    <Setter Property="BorderBrush" Value="#2D53DA"/>                   
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -934,7 +2347,7 @@
         <Style x:Key="TankSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding  IsTankTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
-                    <Setter Property="BorderBrush" Value="#2D53DA"/>                  
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -942,15 +2355,15 @@
         <Style x:Key="ServiceSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding  IsServiceTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
-                    <Setter Property="BorderBrush" Value="#2D53DA"/>                  
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="BuySellSectionBtnStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding  IsBuySellTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
-                    <Setter Property="BorderBrush" Value="#2D53DA"/>                  
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -969,11 +2382,11 @@
                     <Setter Property="Background" Value="Aqua"/>
                 </Trigger>
 
-               
+
             </Style.Triggers>
-        </Style> 
-        
-        
+        </Style>
+
+
         <Style x:Key="TextBoxSearch" TargetType="TextBox">
             <Setter Property="Background" Value="#ffffff"/>
             <Setter Property="Foreground" Value="#b0b9c6"/>
@@ -987,18 +2400,845 @@
                     <ControlTemplate TargetType="TextBoxBase">
                         <Border x:Name="border" CornerRadius="7" Background="{TemplateBinding Background}" SnapsToDevicePixels="True"
                         BorderThickness="1" BorderBrush="#e0e6ed">
-                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden"
                                       VerticalScrollBarVisibility="Hidden"/>
-                        </Border>                   
-                        
+                        </Border>
+
                     </ControlTemplate>
-                                        
+
                 </Setter.Value>
             </Setter>
         </Style>
 
 
+        <!-- BUTTON OPERATIONS -->
+        <Style x:Key="OperationsButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="BorderOperationsBtnStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+        </Style>
+
+
+        <Style x:Key="BorderEditBtn" TargetType="Border" BasedOn="{StaticResource BorderOperationsBtnStyle}">
+            <Setter Property="Background" Value="#2D53DA"/>
+
+            <Style.Triggers>
+                <Trigger Property="Border.IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="CornflowerBlue"/>
+                </Trigger>
+
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="BorderRemoveBtn" TargetType="Border" BasedOn="{StaticResource BorderOperationsBtnStyle}">
+            <Setter Property="Background" Value="#F44862"/>
+            <Style.Triggers>
+                <Trigger Property="Border.IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightCoral"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+        <!-- logo icon in data grid -->
+        <Style x:Key="LexusCarLogoIcon" TargetType="Image">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Lexus">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="StarCarLogoIcon" TargetType="Image">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Star">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="StyleCarLogoIcon" TargetType="Icon:PackIconSimpleIcons">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Height" Value="27"/>
+            <Setter Property="Width" Value="27"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style x:Key="AlfaRomeoLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Alfa Romeo">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AudiLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Audi">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BmwLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="BMW">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ChevroletLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Chevrolet">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CitroenLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Citroen">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DafLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Daf">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FiatLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Fiat">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FordLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Ford">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HondaLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Honda">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HyundaiLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Hyundai">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="InfinitiLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Infiniti">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="IvecoLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Iveco">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="JeepLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Jeep">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="KiaLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Kia">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LandRoverLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Land Rover">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ManLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Man">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MazdaLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mazda">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MercedesLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mercedes">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MiniLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mini">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MitsubishiLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mitsubishi">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NissanLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Nissan">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="OpelLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Opel">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PeugeotLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Peugeot">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="RenaultLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Renault">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SeatLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Seat">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SkodaLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Skoda">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ToyotaLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Toyota">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="VWLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="VW">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="VolvoLogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Volvo">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LogoIconStyle"  TargetType="Icon:PackIconSimpleIcons" BasedOn="{StaticResource StyleCarLogoIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+        <Style x:Key="TrueStatusIcon" TargetType="Icon:PackIconForkAwesome">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#2F9C2F"/>
+
+        </Style>
+
+        <Style x:Key="FalseStatusIcon" TargetType="Icon:PackIconEntypo">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#F44862"/>
+
+        </Style>
+
+
+        <Style x:Key="TrueCompanyOwnIcon" TargetType="Icon:PackIconForkAwesome" BasedOn="{StaticResource TrueStatusIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding CompanyOwn, Mode=OneWay}" Value="true">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="FalseCompanyOwnIcon" TargetType="Icon:PackIconEntypo" BasedOn="{StaticResource FalseStatusIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding CompanyOwn, Mode=OneWay}" Value="false">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="TrueGpsIcon" TargetType="Icon:PackIconForkAwesome" BasedOn="{StaticResource TrueStatusIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding GpsMonitoring, Mode=OneWay}" Value="true">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="FalseGpsIcon" TargetType="Icon:PackIconEntypo" BasedOn="{StaticResource FalseStatusIcon}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding GpsMonitoring, Mode=OneWay}" Value="false">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+
+
+
+        <!-- ************************** -->
+        <!--   EDIT CAR PARAM WINDOW    -->
+        <!-- ************************** -->
+        <Style x:Key="GroupBoxEditCarParam" TargetType="GroupBox">
+            <Setter Property="Width" Value="190"/>
+            <Setter Property="Height" Value="57"/>
+        </Style>
+
+        <Style x:Key="GroupBoxWithdrawal" TargetType="GroupBox">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedCar.Akt, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+            </Style.Triggers>
+            
+        </Style>
         
+            
+            <Style x:Key="GroupBoxDriverBranchEditCarParam" TargetType="GroupBox">
+            <Setter Property="Width" Value="250"/>
+            <Setter Property="Height" Value="57"/>
+        </Style>
+
+
+        <Style x:Key="GroupBoxHeader" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#2D53DA"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+        </Style>
+
+        <Style x:Key="GroupBoxTextbox" TargetType="TextBox">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- IMAGE LOGO SECTION -->
+        <Style x:Key="ImageLogoStyle" TargetType="Image">
+            <Setter Property="MaxHeight" Value="180"/>
+            <Setter Property="MaxWidth" Value="180"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Stretch" Value="Fill" />
+            <Setter Property="Margin" Value="0 0 5 0"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+
+
+        <Style x:Key="AlfaromeoStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Alfa Romeo">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AudiStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Audi">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BMWStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="BMW">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ChevroletStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Chevrolet">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CitroenStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Citroen">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DafStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Daf">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FiatStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Fiat">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FordStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Ford">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HondaStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Honda">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HyundaiStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Hyundai">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="InfinitiStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Infiniti">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="IvecoStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Iveco">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="JeepStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Jeep">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="KiaStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Kia">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LandroverStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Land Rover">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LexusStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Lexus">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MazdaStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mazda">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ManStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Man">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MercedesStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mercedes">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MiniStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mini">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MitsubishiStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Mitsubishi">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NissanStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Nissan">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="OpelStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Opel">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="PeugeotStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Peugeot">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="RenaultStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Renault">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SeatStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Seat">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SkodaStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Skoda">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="StarStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Star">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="ToyotaStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Toyota">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="VolvoStyle" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Volvo">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="VW" TargetType="Image" BasedOn="{StaticResource ImageLogoStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding BrandName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="VW">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+
+
+
+
+
+
+
+
+        <!-- TAB BUTTON SECTION -->
+        <Style x:Key="GeneralSectionBtnEditCarStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsGeneralTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TankSectionBtnEditCarStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsTankTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ServiceSectionBtnEditCarStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsServiceTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BuySellSectionBtnEditCarStyle" TargetType="Button" BasedOn="{StaticResource TabButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsBuySellTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True" >
+                    <Setter Property="BorderBrush" Value="#2D53DA"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!-- GRIDS SECTION -->
+        <Style x:Key="GeneralGridStyle" TargetType="Grid">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsGeneralTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TankGridStyle" TargetType="Grid">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsTankTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ServiceGridStyle" TargetType="Grid">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding  IsServiceTabBtnActive , Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BuySellGridStyle" TargetType="Grid">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsBuySellTabBtnActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="true" >
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="MainButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2D53DA"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Width" Value="120" />
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0 20 0 0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="CornflowerBlue"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="OkButtonStyle" TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
+            <Setter Property="Background" Value="#2F9C2F"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Green"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+
+        </Style>
+
+  <Style x:Key="CancelButtonStyle" TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
+            <Setter Property="Background" Value="#F44862"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Red"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+
+        </Style>
+
+
+
+
 
     </Application.Resources>
 </Application>

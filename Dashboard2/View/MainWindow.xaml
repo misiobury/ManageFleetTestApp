@@ -11,7 +11,8 @@
         xmlns:local4="clr-namespace:Dashboard2.View.Fleet"
         xmlns:local5="clr-namespace:Dashboard2.View.Drivers"
         xmlns:local6="clr-namespace:Dashboard2.View.Statistics"
-        xmlns:local7="clr-namespace:Dashboard2.View.Settings"        
+        xmlns:local7="clr-namespace:Dashboard2.View.Settings"
+         xmlns:Views="clr-namespace:Dashboard2.View.Fleet"
         xmlns:ViewModelWire ="clr-namespace:Dashboard2.ViewModel" 
         
         mc:Ignorable="d"
@@ -56,8 +57,13 @@
         <DataTemplate DataType="{x:Type local:SettingsViewModel}">
             <local7:SettingsPage />
         </DataTemplate>
-    </Window.Resources>
 
+
+  <!--    <DataTemplate DataType="{x:Type local:EditCarParamViewModel}">
+            <Views:EditCarParamWindow />
+        </DataTemplate>
+-->
+    </Window.Resources>
 
 
     <Grid x:Name="ProgramGrid" Background="#EDF2FF" UseLayoutRounding="True">
@@ -281,7 +287,7 @@
 
             <!-- PAGE LOADER CONTENT-->
             <DockPanel Grid.Row="1" x:Name="MainPagesPanelLoader"  Height="751" Width="Auto" Margin="0,0,10,0" Background="Transparent" VerticalAlignment="Top" >
-                <Frame x:Name="PageLoader"  Content="{Binding SelectedPage}" NavigationUIVisibility="Hidden" Height="732"/>
+                <Frame x:Name="PageLoader"  Content="{Binding SelectedPage}" NavigationUIVisibility="Hidden" Height="744"/>
             </DockPanel>
         </Grid>
 

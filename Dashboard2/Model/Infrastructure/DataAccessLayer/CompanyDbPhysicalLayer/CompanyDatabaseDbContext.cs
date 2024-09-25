@@ -87,7 +87,13 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
 
         //Initialize Car List from Db
         private void InitializeCarListFromCompanyDb()
-        {
+        { 
+          
+           // command1.ExecuteNonQuery();
+           
+          
+          
+
             OracleCommand SelectAllActiveCarCommand = _OracleConnection.CreateCommand();
             SelectAllActiveCarCommand.CommandText = SqlCommandsStaticClass.SelectAllActiveCarsCommand;
 
@@ -96,6 +102,8 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
 
             OracleCommand SelectAllNonActiveCarsCommand = _OracleConnection.CreateCommand();
             SelectAllNonActiveCarsCommand.CommandText = SqlCommandsStaticClass.SelectAllNonActiveCarsCommand;
+
+           
 
 
             OracleDataReader ActiveDriversReader = SelectAllActiveDriversCommand.ExecuteReader();
@@ -272,6 +280,37 @@ namespace Dashboard2.Model.Infrastructure.DataAccessLayer.CompanyDbPhysicalLayer
 
 
         }
+
+        public void UpdateCarParamInDb(Car selectedCar)
+        {
+            //MessageBox.Show("companydbcontext - wywolano metode\n"+selectedCar.RegNum);
+            MessageBox.Show("companydbcontext - wywolano metode, update do bazy:\n"+ SqlCommandsStaticClass.GetUpdateCarParamUpdateCommand(selectedCar));
+
+            /*
+            if (selectedCar != null)
+            {
+                try
+                {
+                    OracleCommand command1 = _OracleConnection.CreateCommand();
+                   // command1.CommandText = $@"UPDATE ANDRZEJ.AT_SAMOCH_BAZA SET oso_kod=null WHERE nr_rej='CT8066T'";
+                    command1.CommandText = SqlCommandsStaticClass.GetUpdateCarParamUpdateCommand(selectedCar);
+                   // MessageBox.Show(command1.CommandText);
+                    command1.ExecuteNonQuery();
+                    MessageBox.Show("Zaktualizowano dane");
+                }
+
+                catch (OracleException ex)
+                {
+                    MessageBox.Show("Record is not inserted into the database table.\nsqlstate: " + ex.Errors + "\nnumber: " + ex.Number);
+                    MessageBox.Show("Exception Message: " + ex.Message);
+                    // MessageBox.Show("Exception Source: " + ex.Source);
+
+
+                }
+
+            }
+            */
+}
 
 
         public ObservableCollection<Car> GetAllActiveCarListFromCompanyDb()

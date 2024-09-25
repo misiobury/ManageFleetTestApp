@@ -18,7 +18,8 @@ namespace Dashboard2.Model.Domain
         //General Section
         public string? Vin {  get; set; }
         public string? RegNum {  get; set; }
-        public string?  Brand {  get; set; }
+        public string?  BrandModel {  get; set; }
+        public string?  BrandName {  get; set; }
         private Driver? _driver { get; set; }
 
         public string? Driver 
@@ -29,11 +30,20 @@ namespace Dashboard2.Model.Domain
                 else 
                     return null;
             }  
+        } 
+        public string? DriverID 
+        { get 
+            { 
+                if(_driver != null)
+                return _driver.IdPerson; 
+                else 
+                    return null;
+            }  
         }
        // public string? Surname { get { return Driver.Surnname; } }
         //  public int? NumOfDriver { get; set; }
 
-        public int? BranchID { get; set; }
+        public string? BranchID { get; set; }
         public string? BranchName {  get; set; }
         public bool? GpsMonitoring { get; set; }
         public string? GpsDeviceId { get; set; }
@@ -54,7 +64,7 @@ namespace Dashboard2.Model.Domain
         //Tank/Fuel Section
         public string? FuelTankCapacity {  get; set; }
         public string? FuelConsumptionPer100 {  get; set; }
-        public string? GasTankCapacity{  get; set; }
+        public string? GasTankCapacity {  get; set; }
         public string? GasConsumptionPer100 {  get; set; }
         public string? FuelType {  get; set; }
         public string? OrlenTankCard {  get; set; }
@@ -82,9 +92,39 @@ namespace Dashboard2.Model.Domain
         {
             Vin = CarDTO.NR_VIN;
             RegNum = CarDTO.NR_REJ;
-            Brand = CarDTO.MARKA;
-         //  int.TryParse(CarDTO.OSO_KOD, out int NumOfDriver);
-           int.TryParse(CarDTO.FIR_KOD, out int BranchID);
+           
+            if(BrandCarName.BrandList.FirstOrDefault(x => CarDTO.MARKA.Contains(x.ToUpper())) != null)
+            {
+                BrandName = BrandCarName.BrandList.FirstOrDefault(x => CarDTO.MARKA.Contains(x.ToUpper()));
+              
+                    
+                    if(CarDTO.MARKA.IndexOf(" ")<0)
+                {
+                    BrandModel = null;
+                }
+                    else
+                {
+                    BrandModel= CarDTO.MARKA.Substring(CarDTO.MARKA.IndexOf(" "));
+                }
+                    
+                    //  if(CarDTO.MARKA.Substring(CarDTO.MARKA.IndexOf(" ")));
+            }
+            else
+            {
+                BrandName = null;
+                BrandModel = CarDTO.MARKA;
+
+            }
+
+           
+
+          //  BrandTypeListSelectedIndex = BrandTypeList.IndexOf(BrandTypeList.FirstOrDefault(x => SelectedCar.BrandModel.Contains(x.ToUpper())));
+
+            //   BrandName = BrandTypeList[BrandTypeListSelectedIndex];
+
+            //  int.TryParse(CarDTO.OSO_KOD, out int NumOfDriver);
+           // int.TryParse(CarDTO.FIR_KOD, out string BranchID);
+            BranchID = CarDTO.FIR_KOD; 
             BranchName = CarDTO.FIR;
             GpsMonitoring = CarDTO.GPS=="T"? true : false;
             CompanyOwn = CarDTO.WLASNY=="T"? true : false;

@@ -43,7 +43,7 @@ namespace Dashboard2.ViewModel
 
 
         //---------------------------------------------------------------
-        // SELECT CAR  SECTION 
+        // AVAILABLE CAR LIST SECTION 
         //---------------------------------------------------------------
         private DTOForGetLocationsForCar _selectedCar;
         public DTOForGetLocationsForCar SelectedCar { get { return _selectedCar; } set { _selectedCar = value; OnPropertyChanged("SelectedCar"); } }
@@ -54,6 +54,18 @@ namespace Dashboard2.ViewModel
 
         private int _countOfGpsCars;
         public int countOfGpsCars { get { return _countOfGpsCars; } set { _countOfGpsCars = value; OnPropertyChanged("countOfGpsCars"); } }
+
+
+        //---------------------------------------------------------------
+        // SELECTED CARS LIST SECTION 
+        //---------------------------------------------------------------
+        private ObservableCollection<SimpleCarObjectForViasatPage> _listOfSelectedCars;
+        public ObservableCollection<SimpleCarObjectForViasatPage> ListOfSelectedCars { get { return _listOfSelectedCars; } set { _listOfSelectedCars = value; OnPropertyChanged("ListOfSelectedCars"); } }
+        // private ObservableCollection<DTOForGetLocationsForCar> _dTOForGetLocationsForCars { get; set; }
+        private ObservableCollection<DTOForGetLocationsForCar> DTOForGetLocationsForCars;
+
+        private int _listOfSelectedCarsSelectedIndex;
+        public int ListOfSelectedCarsSelectedIndex { get { return _listOfSelectedCarsSelectedIndex; } set { _listOfSelectedCarsSelectedIndex = value; OnPropertyChanged("ListOfSelectedCarsSelectedIndex"); } }
 
 
 
@@ -100,22 +112,37 @@ namespace Dashboard2.ViewModel
         //---------------------------------------------------------------
         // RESULT CHECKPOINTS TABLE SECTION 
         //---------------------------------------------------------------
-        private List<CheckPoint> _checkPoints;
-        public List<CheckPoint> ListOfCheckPointsForSummaryOfResult { get { return _checkPoints; } set { _checkPoints = value; OnPropertyChanged("ListOfCheckPointsForSummaryOfResult"); } } 
+        //private List<CheckPoint> _checkPoints;
+        //public List<CheckPoint> ListOfCheckPointsForSummaryOfResult { get { return _checkPoints; } set { _checkPoints = value; OnPropertyChanged("ListOfCheckPointsForSummaryOfResult"); } }
 
         private ObservableCollection<ObservableCollection<string>> _listOfSummaryResultForSelectedCar;
         public ObservableCollection<ObservableCollection<string>> ListOfSummaryResultForSelectedCar { get { return _listOfSummaryResultForSelectedCar; } set { _listOfSummaryResultForSelectedCar = value; OnPropertyChanged("ListOfSummaryResultForSelectedCar"); } }
 
         private bool _isCommandProcesing;
         public bool IsCommandProcessing { get { return _isCommandProcesing; } set { _isCommandProcesing = value; OnPropertyChanged("IsCommandProcessing"); } }
-        
+
         private bool _isCommandProcesing2;
         public bool IsCommandProcessing2 { get { return _isCommandProcesing2; } set { _isCommandProcesing2 = value; OnPropertyChanged("IsCommandProcessing2"); } }
+
+
+        //---------------------------------------------------------------
+        // RESULT CHECKPOINTS TABLE SECTION FOR CARS
+        //---------------------------------------------------------------
+
+        private ObservableCollection<ObservableCollection<ResultCheckpointsDtoObject>> resultCheckpointsListDtoObjects;
+
+        private ObservableCollection<ResultCheckpointsDtoObject> _checkpointsListForSelectedCarFromList;
+        public ObservableCollection<ResultCheckpointsDtoObject> CheckpointsListForSelectedCarFromList { get { return _checkpointsListForSelectedCarFromList; } set { _checkpointsListForSelectedCarFromList = value; OnPropertyChanged("CheckpointsListForSelectedCarFromList"); } }
+
+
+
 
         //---------------------------------------------------------------
         // RESULT MAP SECTION 
         //---------------------------------------------------------------
-      
+
+
+
 
 
         //=====================================================================
@@ -123,20 +150,21 @@ namespace Dashboard2.ViewModel
         //=====================================================================
         public ViasatViewModel(ViasatDbContext viasatDbContext, ObservableCollection<Car> AllCarsList)
         {
-          //  MessageBox.Show("jestem w konstruktorze ViasatVM");
+            //  MessageBox.Show("jestem w konstruktorze ViasatVM");
             this.PageTitle = "ViasatPage!";
             this.viasatDbContext = viasatDbContext;
             var list = AllCarsList.OrderBy(x => x.RegNum).ToList();
             this.AllCarsFromDbAndApiMainList = new ObservableCollection<Car>(list);
-           this.GmapObject = new GmapObject();
-            ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
+            this.GmapObject = new GmapObject();
+           // ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
 
 
             InitialParameters();
             InitializeTableWithAvailablesCars();
 
-            ShowSummaryForSelectedCar = new RelayCommand(_showSummaryForSelectedCar, CanCommandBeExecuted);
-
+            TakeCheckpointsForSelectedCars = new RelayCommand(_takeCheckpointsForSelectedCars, CanCommandBeExecuted);
+            AddCarToSelectedList = new RelayCommand(_addCarToSelectedList, CanCommandBeExecuted);
+            ShowSummaryForSelectedCar = new RelayCommand(_showSummaryForSelectedCar2, CanCommandBeExecuted);
         }
 
         public ViasatViewModel() { }
@@ -155,34 +183,137 @@ namespace Dashboard2.ViewModel
 
         public ICommand? ShowSummaryForSelectedCar { get; set; }
 
+        public ICommand? AddCarToSelectedList { get; set; }
+
+        public ICommand? TakeCheckpointsForSelectedCars { get; set; }
+
         #endregion
 
-      
+
 
         #region Actions for Commands to Execute()
+
+        private void _showSummaryForSelectedCar2(object value)
+        {
+            // System.Windows.MessageBox.Show($"1");
+            int.TryParse(value.ToString(), out int x);
+            // System.Windows.MessageBox.Show($"wartsc x= {x}");
+            this.CheckpointsListForSelectedCarFromList = this.resultCheckpointsListDtoObjects[x];
+            this.GmapObject.ChangeLayersVisibilityForSelectedCar(x);
+        }
+        
+
+
+        private async void _takeCheckpointsForSelectedCars(object value)
+        {
+            GmapObject.RemoveOverlaysAndRoutesFromGmap();
+
+            this.DTOForGetLocationsForCars = new ObservableCollection<DTOForGetLocationsForCar>();
+            this.resultCheckpointsListDtoObjects = new ObservableCollection<ObservableCollection<ResultCheckpointsDtoObject>>();
+            //  this.ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
+            this.CheckpointsListForSelectedCarFromList = new ObservableCollection<ResultCheckpointsDtoObject>();
+
+            if (ListOfSelectedCars.Count > 0 && this.ListOfSelectedCars != null)
+            {
+                int HourFromTemp = int.Parse(this.HourFromList[HourFromSelectedIndex]);
+                int HourToTemp = int.Parse(this.HourToList[this.HourToSelectedIndex]);
+                int MinuteFromTemp = int.Parse(this.MinutesFromList[this.MinuteFromSelectedIndex]);
+                int MinuteToTemp = int.Parse(this.MinutesToList[this.MinuteToSelectedIndex]);
+
+                if ((HourFromTemp > HourToTemp) || (HourFromTemp == HourToTemp) && (MinuteFromTemp > MinuteToTemp))
+                {
+                    System.Windows.MessageBox.Show("Czas początkowy jest większy niż czas końcowy,\nproszę popraw zakres czasowy.");
+                }
+                else
+                {
+                    DateTime dateTimeFrom = new DateTime(DateOnly.FromDateTime(SelectedDate), new TimeOnly(int.Parse(this.HourFromList[HourFromSelectedIndex]), int.Parse(this.MinutesFromList[MinuteFromSelectedIndex]), 0));
+                    DateTime dateTimeTo = new DateTime(DateOnly.FromDateTime(SelectedDate), new TimeOnly(int.Parse(this.HourToList[HourToSelectedIndex]), int.Parse(this.MinutesToList[MinuteToSelectedIndex]), 0));
+
+                    //create car list from selected cars list, to for send request to API
+                    for (int i = 0; i < ListOfSelectedCars.Count; i++)
+                    {
+                        DTOForGetLocationsForCars.Add(new DTOForGetLocationsForCar(this.ListOfSelectedCars[i].Id,
+                                                                 this.ListOfSelectedCars[i].RegNum,
+                                                                 this.ListOfSelectedCars[i].Owner,
+                                                                 dateTimeFrom,
+                                                                 dateTimeTo,
+                                                                 int.Parse(this.CarMinParkingTime[this.CarParkTimeIndex])
+                                                                 ));
+                    }
+
+                    this.IsCommandProcessing = true;
+
+                    /* 
+                     * string test = "";
+                    foreach (var el in DTOForGetLocationsForCars)
+                    {
+                        test += $"{el.Id} | {el.RegNum} | {el.DateFrom} | {dateTimeTo} | {el.CarParkTime}\n";
+                    }
+                    System.Windows.MessageBox.Show(test);
+                    */
+                    //send request to API for every car
+                    for (int i = 0; i < DTOForGetLocationsForCars.Count; i++)
+                    {
+                        List<CheckPoint> ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
+
+                        await Task.Run(() =>
+                        {
+                            //  MessageBox.Show("zaczynamy");
+                            ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
+                            ListOfCheckPointsForSummaryOfResult = this.viasatDbContext.GetLocationsExNC(DTOForGetLocationsForCars[i]);
+                        });
+                        Task.WaitAll();
+
+
+                        await Task.Run(() =>
+                        {
+                            // this.IsCommandProcessing2 = true;
+                            Func<DateTime, DateTime, string, string> GetMileageFromApiDelegate = viasatDbContext.GetDeviceStatistic;
+                            this.resultCheckpointsListDtoObjects.Add(new ObservableCollection<ResultCheckpointsDtoObject>(this.GmapObject.InitializeCheckpointMarkersListAndRoutes(ListOfCheckPointsForSummaryOfResult, DTOForGetLocationsForCars[i], GetMileageFromApiDelegate)));
+                            // this.IsCommandProcessing2 = false;
+                        });
+                        Task.WaitAll();
+
+                    }
+                    
+                    this.CheckpointsListForSelectedCarFromList = this.resultCheckpointsListDtoObjects[0];
+                    //this._showSummaryForSelectedCar(0);
+                    this.GmapObject.ChangeLayersVisibilityForSelectedCar(0);
+                    this.IsCommandProcessing = false;
+
+                }
+
+            }
+            else
+                System.Windows.MessageBox.Show("Nie wybrałeś żadnego auta aby móc wygenerować dla niego przebieg.");
+
+
+        }
+
+
+
+
         private async void _showSummaryForSelectedCar(object value)
         {
-           
-
-            this.ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
+           // this.ListOfCheckPointsForSummaryOfResult = new List<CheckPoint>();
             this.ListOfSummaryResultForSelectedCar = new ObservableCollection<ObservableCollection<string>>();
             int HourFromTemp = int.Parse(this.HourFromList[HourFromSelectedIndex]);
             int HourToTemp = int.Parse(this.HourToList[this.HourToSelectedIndex]);
             int MinuteFromTemp = int.Parse(this.MinutesFromList[this.MinuteFromSelectedIndex]);
             int MinuteToTemp = int.Parse(this.MinutesToList[this.MinuteToSelectedIndex]);
 
-            if ((HourFromTemp > HourToTemp) || (HourFromTemp==HourToTemp) && (MinuteFromTemp > MinuteToTemp) )
+            if ((HourFromTemp > HourToTemp) || (HourFromTemp == HourToTemp) && (MinuteFromTemp > MinuteToTemp))
             {
-               System.Windows.MessageBox.Show("Czas początkowy jest większy niż czas końcowy,\nproszę popraw zakres czasowy.");
+                System.Windows.MessageBox.Show("Czas początkowy jest większy niż czas końcowy,\nproszę popraw zakres czasowy.");
             }
             else
             {
                 DateTime dateTimeFrom = new DateTime(DateOnly.FromDateTime(SelectedDate), new TimeOnly(int.Parse(this.HourFromList[HourFromSelectedIndex]), int.Parse(this.MinutesFromList[MinuteFromSelectedIndex]), 0));
                 DateTime dateTimeTo = new DateTime(DateOnly.FromDateTime(SelectedDate), new TimeOnly(int.Parse(this.HourToList[HourToSelectedIndex]), int.Parse(this.MinutesToList[MinuteToSelectedIndex]), 0));
 
-                if(this.ListOfAvailableCars!=null)
+                if (this.ListOfAvailableCars != null)
                 {
-                    this.SelectedCar = new DTOForGetLocationsForCar(this.ListOfAvailableCars[this.ListOfAvailableCarsSelectedIndex].Id, 
+                    this.SelectedCar = new DTOForGetLocationsForCar(this.ListOfAvailableCars[this.ListOfAvailableCarsSelectedIndex].Id,
                                                                  this.ListOfAvailableCars[this.ListOfAvailableCarsSelectedIndex].RegNum,
                                                                  this.ListOfAvailableCars[this.ListOfAvailableCarsSelectedIndex].Owner,
                                                                  dateTimeFrom,
@@ -191,13 +322,13 @@ namespace Dashboard2.ViewModel
                                                                  );
                 }
 
-               // MessageBox.Show($"{this.SelectedCar.Id}\n{this.SelectedCar.RegNum}\n{this.SelectedCar.Name}\n{this.SelectedCar.DateFrom}\n{this.SelectedCar.DateTo}\n{this.SelectedCar.CarParkTime}");
+                // MessageBox.Show($"{this.SelectedCar.Id}\n{this.SelectedCar.RegNum}\n{this.SelectedCar.Name}\n{this.SelectedCar.DateFrom}\n{this.SelectedCar.DateTo}\n{this.SelectedCar.CarParkTime}");
 
-                await Task.Run( () =>
+                await Task.Run(() =>
                 {
                     this.IsCommandProcessing = true;
                     //  MessageBox.Show("zaczynamy");
-                    this.ListOfCheckPointsForSummaryOfResult =  this.viasatDbContext.GetLocationsExNC(this.SelectedCar);
+                 //   this.ListOfCheckPointsForSummaryOfResult = this.viasatDbContext.GetLocationsExNC(this.SelectedCar);
                     this.IsCommandProcessing = false;
                 });
                 Task.WaitAll();
@@ -205,15 +336,15 @@ namespace Dashboard2.ViewModel
                 //   System.Windows.MessageBox.Show($"X0: {this.ListOfCheckPointsForSummaryOfResult[0].X}, Y0: {this.ListOfCheckPointsForSummaryOfResult[0].X}");
                 //System.Windows.MessageBox.Show("skonczylem task1");
 
-                await  Task.Run(() =>
+                await Task.Run(() =>
                 {
                     this.IsCommandProcessing2 = true;
-                    Func<DateTime,DateTime, string, string> GetMileageFromApiDelegate = viasatDbContext.GetDeviceStatistic;
-                    this.ListOfSummaryResultForSelectedCar =   this.GmapObject.InitializeCheckpointMarkersListAndRoutes(this.ListOfCheckPointsForSummaryOfResult, int.Parse(this.CarMinParkingTime[this.CarParkTimeIndex]), SelectedCar, GetMileageFromApiDelegate);
+                    Func<DateTime, DateTime, string, string> GetMileageFromApiDelegate = viasatDbContext.GetDeviceStatistic;
+                    //   this.ListOfSummaryResultForSelectedCar =   this.GmapObject.InitializeCheckpointMarkersListAndRoutes(this.ListOfCheckPointsForSummaryOfResult, SelectedCar, GetMileageFromApiDelegate);
                     this.IsCommandProcessing2 = false;
                 });
                 Task.WaitAll();
-              
+
 
 
 
@@ -235,6 +366,23 @@ namespace Dashboard2.ViewModel
             }
             //MessageBox.Show("dziala!");
         }
+    
+      
+
+
+        private void _addCarToSelectedList(object value)
+        {
+            // System.Windows.MessageBox.Show("double click");
+            if (!this.ListOfSelectedCars.Any(x =>  x.RegNum == this.ListOfAvailableCars[ListOfAvailableCarsSelectedIndex].RegNum ))
+        {
+                this.ListOfSelectedCars.Add(this.ListOfAvailableCars[ListOfAvailableCarsSelectedIndex]);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Taki pojazd jest już na liście wybranych aut.");
+            }
+            
+        }
         #endregion
 
 
@@ -255,6 +403,7 @@ namespace Dashboard2.ViewModel
         //----------------------------------
         private void InitialParameters()
         {
+            this.ListOfSelectedCars = new ObservableCollection<SimpleCarObjectForViasatPage>();
             this.countOfGpsCars = this.AllCarsFromDbAndApiMainList.Where(x => x.GpsDeviceId != null).Count();
             this.IsCommandProcessing = false;
             //SET HOURS

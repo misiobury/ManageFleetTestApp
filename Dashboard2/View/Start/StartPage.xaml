@@ -242,7 +242,7 @@
 
           
 
-            <!-- 1 big square -->
+            <!-- CARS COUNT -  1 rectangle -->
             <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Style="{StaticResource MainSquareBorder}"  >
                 <Grid>
                     <Grid.RowDefinitions>

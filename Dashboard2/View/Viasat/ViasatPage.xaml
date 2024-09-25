@@ -9,17 +9,14 @@
       xmlns:local="clr-namespace:Dashboard2.View.Viasat"
       mc:Ignorable="d" 
       Title="ViasatPage"
-      d:DesignHeight="780" d:DesignWidth="1230">
+      d:DesignHeight="740" d:DesignWidth="1230">
 
 
     <Grid Margin="0" Background="#EDF2FF" Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-
             <RowDefinition Height="7*"/>
-
-
         </Grid.RowDefinitions>
 
 
@@ -33,25 +30,382 @@
         <!-- MAIN BODY -->
         <Grid Grid.Row="2"  >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="5*"/>
             </Grid.ColumnDefinitions>
 
+            <!--
+             <Grid.RowDefinitions>
+     <RowDefinition Height="5*"/>
+     <RowDefinition Height="7*"/>
+ </Grid.RowDefinitions>
+            
+            -->
 
-            <!--MAP-->
-            <Border Grid.Column="2" CornerRadius="20" BorderThickness="2"  Background="White" Margin="10">
-                <Grid Margin="0" Background="Transparent" >
-                    <WindowsFormsHost  x:Name="WFH"  Background="LightGreen" Width="480" Height="480" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 0" >
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
 
-                        <wf:Panel x:Name = "Panel2"  />
-                    </WindowsFormsHost>
+                </Grid.RowDefinitions>
 
-                    <Button Grid.Column="2" x:Name="ButtonOwn" Content="Pokaż zestawienie"
-                            HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 20"
-                            Command="{Binding ShowSummaryForSelectedCar }"/>
-                </Grid>
-            </Border>
+                <!-- AVAILABLE CARS 1 RECTANGLE -->
+                <Border  Grid.Row="0"  Style="{StaticResource ViasatPageRectangleBorder}"  >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="7*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- HEADER OF SQUARE -->
+                        <Grid Grid.Row="0" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- blue square -->
+                            <Grid Grid.Column="0">
+                                <Border BorderThickness="16 9 14 2" Style="{StaticResource ViasatBlueSquareHeader}"/>
+                            </Grid>
+
+                            <!-- header content -->
+                            <Border Grid.Column="1" Style="{StaticResource ViasatHeaderUnderline}" >
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Dostępne pojazdy" Style="{StaticResource ViasatTextblockMainTitle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- CONTENT SQUARE -->
+                        <Grid Grid.Row="1" Background="Transparent" >
+                            <ListView x:Name="ListOfAvailableCars"  DisplayMemberPath="Name" FontSize="13" Background="White" Width="270" Height="254" Margin="59,0,0,0"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                  ItemsSource="{Binding ListOfAvailableCars, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedIndex="{Binding ListOfAvailableCarsSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseDoubleClick="ListOfAvailableCars_MouseDoubleClick">
+
+                                <ListView.View  >
+                                    <GridView x:Name="grdTest"  >
+                                        <GridViewColumn  Header="#" DisplayMemberBinding="{Binding RowNum}"  Width="Auto"/>
+                                        <GridViewColumn  Header="Rejestracja" DisplayMemberBinding="{Binding RegNum}"  Width="Auto"/>
+                                        <GridViewColumn  Header="Kierowca/Oddział" DisplayMemberBinding="{Binding Owner}" Width="Auto"/>
+                                        <!--     <GridViewColumn  Header="ID" DisplayMemberBinding="{Binding Id}" Width="Auto" /> -->
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- SELECTED CARS 4 RECTANGLE -->
+                <Border  Grid.Row="1"  Style="{StaticResource ViasatPageRectangleBorder}"  >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="6*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- HEADER OF SQUARE -->
+                        <Grid Grid.Row="0" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- blue square -->
+                            <Grid Grid.Column="0">
+                                <Border BorderThickness="16 12 14 4" Style="{StaticResource ViasatBlueSquareHeader}"/>
+                            </Grid>
+
+                            <!-- header content -->
+                            <Border Grid.Column="1" Style="{StaticResource ViasatHeaderUnderline}" >
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Wybrane pojazdy" Style="{StaticResource ViasatTextblockMainTitle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- CONTENT SQUARE -->
+                        <Grid Grid.Row="1" Background="Transparent" >
+                            <ListView x:Name="ListOfSelectedCars"  DisplayMemberPath="Name" FontSize="12" Background="White" Width="270" Height="241" Margin="59,0,0,0"
+              HorizontalAlignment="Left" VerticalAlignment="Center" 
+              ItemsSource="{Binding ListOfSelectedCars, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               SelectedIndex="{Binding ListOfSelectedCarsSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    >
+
+                                <ListView.View  >
+                                    <GridView x:Name="grdSelectedCars"  >
+                                        <GridViewColumn  Header="#" DisplayMemberBinding="{Binding RowNum}"  Width="Auto"/>
+                                        <GridViewColumn  Header="Rejestracja" DisplayMemberBinding="{Binding RegNum}"  Width="Auto"/>
+                                        <GridViewColumn  Header="Kierowca/Oddział" DisplayMemberBinding="{Binding Owner}" Width="Auto"/>
+                                        <!--     <GridViewColumn  Header="ID" DisplayMemberBinding="{Binding Id}" Width="Auto" /> -->
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.Resources>
+                                <Style TargetType="ListViewItem">
+                                        <EventSetter Event="PreviewMouseDown" Handler="ListViewItemSelectedCarsTable_MouseDown" />                                   
+
+                                </Style>
+                                </ListView.Resources> 
+                            </ListView>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+
+
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="2*" />
+
+                </Grid.RowDefinitions>
+
+                <!-- SELECT DATE (CALENDAR) 2 RECTANGLE -->
+                <Border Grid.Row="0"  Style="{StaticResource ViasatPageRectangleBorder}"  >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- HEADER OF SQUARE -->
+                        <Grid Grid.Row="0" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- blue square -->
+                            <Grid Grid.Column="0">
+                                <Border BorderThickness="16 8 17 0" Style="{StaticResource ViasatBlueSquareHeader}"/>
+                            </Grid>
+
+                            <!-- header content -->
+                            <Border Grid.Column="1" Style="{StaticResource ViasatHeaderUnderline}" >
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Data " Style="{StaticResource ViasatTextblockMainTitle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- CONTENT SQUARE -->
+                        <Grid Grid.Row="1" Background="Transparent" >
+                            <Calendar  CalendarDayButtonStyle="{DynamicResource CalendarCalendarDayButtonStyle1}" CalendarItemStyle="{DynamicResource CalendarCalendarItemStyle1}" Style="{DynamicResource CalendarStyle1}"
+                         SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+
+
+
+
+                <Border Grid.Row="1"   Style="{StaticResource ViasatPageRectangleBorder}">
+                    <Grid  >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="9*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- HEADER OF SQUARE -->
+                        <Grid Grid.Row="0" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- blue square -->
+                            <Grid Grid.Column="0">
+                                <Border BorderThickness="16 11 14 2" Style="{StaticResource ViasatBlueSquareHeader}"/>
+                            </Grid>
+
+                            <!-- header content -->
+                            <Border Grid.Column="1" Style="{StaticResource ViasatHeaderUnderline}" >
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Checkpointy" Style="{StaticResource ViasatTextblockMainTitle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- CONTENT SQUARE -->
+                        <Grid Grid.Row="1" Background="Transparent" >
+                            <ListView x:Name="ListCheckpointOwn"  FontSize="12" Height="344" VerticalAlignment="Center" 
+HorizontalAlignment="Center" Width="320" ItemsSource="{Binding CheckpointsListForSelectedCarFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                <!--  ItemsSource="{Binding  ListOfSummaryResultForSelectedCar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" -->
+                                
+                                <ListView.View>
+                                    <GridView>
+                                        <!--  <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/> DateTimeReading -->
+                                        <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Id}" Width="Auto"/>
+                                        <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=CheckpointTimeSpan}" Width="Auto"/>
+                                        <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Path=Status}" Width="Auto" />
+                                        <GridViewColumn Header="Przybliżony adres" DisplayMemberBinding="{Binding Path=Address}" Width="Auto"/>
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.Resources>
+                                    <Style TargetType="ListViewItem">
+                                        <EventSetter Event="MouseEnter" Handler=" ListViewItemCheckpointTable_MouseEnter" />
+                                        <EventSetter Event="MouseLeave" Handler=" ListViewItemCheckpointTable_MouseLeave" />
+
+                                    </Style>
+                                </ListView.Resources>
+                            </ListView>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+
+
+
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="2*" />
+                </Grid.RowDefinitions>
+
+                <!-- SELECT TIME 3 RECTANGLE -->
+                <Border  Grid.Row="0"  Style="{StaticResource ViasatPageRectangleBorder}"  >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- HEADER OF SQUARE -->
+                        <Grid Grid.Row="0" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="6*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- blue square -->
+                            <Grid Grid.Column="0">
+                                <Border Style="{StaticResource ViasatBlueSquareHeader}" BorderThickness="20 8 17 0"/>
+                            </Grid>
+
+                            <!-- header content -->
+                            <Border Grid.Column="1" Style="{StaticResource ViasatHeaderUnderline}" >
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Przedział czasowy" Style="{StaticResource ViasatTextblockMainTitle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- CONTENT SQUARE -->
+                        <Grid Grid.Row="1" Background="Transparent" >
+                            
+                            <GroupBox Margin="10,10,246,91" Background="Transparent" Padding="5">
+                                <GroupBox.Header >
+                                    <TextBlock Foreground="Gray" FontSize="10" FontStyle="Italic" Text="Czas początkowy"/>
+                                </GroupBox.Header>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,-7,0" >
+                                    <ComboBox x:Name="HourFrom" ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" 
+                      ItemsSource="{Binding HourFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                      SelectedIndex="{Binding HourFromSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       Style="{DynamicResource ComboBoxOwnStyle}" Width="80" />
+                                    
+                                    <Label Content=":" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
+                                    <ComboBox Name="MinutesFrom" ItemsSource="{Binding MinutesFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+SelectedIndex="{Binding MinuteFromSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+Style="{DynamicResource ComboBoxOwnStyle}" ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" Width="80"  />
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Margin="10,88,246,13" Background="Transparent" Padding="5">
+                                <GroupBox.Header >
+                                    <TextBlock Foreground="Gray" FontSize="10" FontStyle="Italic" Text="Czas końcowy"/>
+                                </GroupBox.Header>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,-7,0" >
+                                    <ComboBox x:Name="HourTo"  ItemsSource="{Binding HourToList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedIndex="{Binding HourToSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{DynamicResource ComboBoxOwnStyle}" ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" Width="80"  />
+                                    <Label Content=":" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
+                                    <ComboBox x:Name="MinutesTo" ItemsSource="{Binding MinutesToList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    SelectedIndex="{Binding MinuteToSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" Style="{DynamicResource ComboBoxOwnStyle}" Width="80"  />
+
+                                </StackPanel>
+                            </GroupBox>
+
+
+                            <GroupBox Margin="238,10,95,91" Background="Transparent" Padding="5">
+                                <GroupBox.Header >
+                                    <TextBlock Foreground="Gray" FontSize="10" FontStyle="Italic" Text="Czas przerwy"/>
+                                </GroupBox.Header>
+                                <ComboBox Name="CarMinParkingTime" ItemsSource="{Binding CarMinParkingTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+SelectedIndex="{Binding  CarParkTimeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}"  Style="{DynamicResource ComboBoxOwnStyle}"    />
+                            </GroupBox>
+
+
+
+
+
+
+
+
+                            <Button x:Name="ShowSummaryBtn" Grid.Row="0" Style="{StaticResource ShowSummaryButton}" Margin="0,97,26,25" Width="189" Height="NaN" Command="{Binding TakeCheckpointsForSelectedCars }" >
+                                <StackPanel Orientation="Horizontal">
+                                    <Icon:PackIconForkAwesome Kind="Check" VerticalAlignment="Center" Width="18" Height="18" Margin="3,3,9,3" />
+                                    <TextBlock FontSize="13" Text="Generuj podsumowanie" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+
+                <!--MAP-->
+                <Border  Grid.Row="1" Grid.RowSpan="2"  Style="{StaticResource ViasatPageRectangleBorder}">
+                    <Grid Margin="0" Background="Transparent" >
+                        <WindowsFormsHost  x:Name="WFH"  Background="LightGreen" Width="438" Height="404" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" >
+
+                            <wf:Panel x:Name = "Panel2"  />
+                        </WindowsFormsHost>
+
+
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -63,119 +417,15 @@
         
         -->
 
-            <!-- SUMMARY CHECKPOINTS TABLE -->
-            <Border Grid.Column="1" CornerRadius="20" BorderThickness="2"  Background="White" Margin="10">
-                <Grid Margin="0" Background="Transparent" >
-                    <ListView x:Name="ListCheckpointOwn"  FontSize="12" Height="484" VerticalAlignment="Center" 
-                   ItemsSource="{Binding  ListOfSummaryResultForSelectedCar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                      HorizontalAlignment="Center" Width="320" Margin="0 50">
-                        <ListView.View>
-                            <GridView>
-                                <!--  <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/> DateTimeReading -->
-                                <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Item[0]}" Width="Auto"/>
-                                <GridViewColumn Header="Czas Odczytu" DisplayMemberBinding="{Binding Path=Item[1]}" Width="Auto"/>
-                                <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Path=Item[2]}" Width="Auto" />
-                                <GridViewColumn Header="Przybliżony adres" DisplayMemberBinding="{Binding Path=Item[3]}" Width="Auto"/>
-                            </GridView>
-                        </ListView.View>
-                        <ListView.Resources>
-                            <Style TargetType="ListViewItem">
-                                <EventSetter Event="MouseEnter" Handler="ListViewItem_MouseEnter" />
-                                <EventSetter Event="MouseLeave" Handler="ListViewItem_MouseLeave" />
-
-                            </Style>
-                        </ListView.Resources>
-                    </ListView>
-                </Grid>
-            </Border>
-
-            
-            <!-- SELECT TABLE -->
-            <Grid Grid.Column="0" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="3*"/>
-                </Grid.RowDefinitions>
-
-                <Border Grid.Row="0" Background="White" CornerRadius="20" BorderThickness="9" >
-                    <Grid>
-                        
-                   
-                    <DatePicker x:Name="DatePicker" HorizontalAlignment="Left" 
-        SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10,23,0,0" Grid.Row="4" 
-        VerticalAlignment="Top" Height="32" Width="138" SelectedDateFormat="Short" AutomationProperties.IsOffscreenBehavior="Onscreen"/>
-
-                    <ComboBox Name="HourFrom" ItemsSource="{Binding HourFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-      SelectedIndex="{Binding HourFromSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-      HorizontalAlignment="Left" Margin="164,28,0,0" Grid.Row="4" VerticalAlignment="Top" Width="50"/>
-                    <ComboBox Name="MinutesFrom" ItemsSource="{Binding MinutesFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-      SelectedIndex="{Binding MinuteFromSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-      HorizontalAlignment="Left" Margin="238,28,0,0" Grid.Row="4" VerticalAlignment="Top" Width="52"/>
-                    <ComboBox Name="HourTo" ItemsSource="{Binding HourToList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-      SelectedIndex="{Binding HourToSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="164,94,0,0" Grid.Row="4" VerticalAlignment="Top" Width="50"/>
-                    <ComboBox Name="MinutesTo" ItemsSource="{Binding MinutesToList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-      SelectedIndex="{Binding MinuteToSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="239,94,0,0" Grid.Row="4" VerticalAlignment="Top" Width="51"/>
-                    <ComboBox Name="CarMinParkingTime" ItemsSource="{Binding CarMinParkingTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-      SelectedIndex="{Binding  CarParkTimeIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="323,28,0,0" Grid.Row="4" VerticalAlignment="Top" Width="78"/>
 
 
 
-                    <TextBlock HorizontalAlignment="Left" FontSize="20" Text="{Binding countOfGpsCars, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Margin="28,263,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="42" Width="102" Background="LightGreen"/>
-                    <Image HorizontalAlignment="Left" Height="88" Margin="571,17,0,0" Grid.Row="4" VerticalAlignment="Top" Width="81" 
-Source="/View/Viasat/animat-rocket-color.gif" >
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Setter Property="Visibility" Value="Hidden"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsCommandProcessing}" Value="true">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-
-                    <Image HorizontalAlignment="Left" Height="88" Margin="571,17,0,0" Grid.Row="4" VerticalAlignment="Top" Width="81" Source="/View/Viasat/caylent_rocket_dribbble_shot.gif" >
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Setter Property="Visibility" Value="Hidden"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsCommandProcessing2}" Value="true">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                    </Grid>
-                </Border>
-
-
-                <Border Grid.Row="1" Background="White" CornerRadius="20" Margin="8">
-                    <ListView x:Name="ListOfAvailableCars"  DisplayMemberPath="Name" FontSize="14" Background="AliceBlue"   
-   Width="264" Height="364" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="30"
-                   ItemsSource="{Binding ListOfAvailableCars, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-SelectedIndex="{Binding ListOfAvailableCarsSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ListView.View  >
-                            <GridView x:Name="grdTest"  >
-                                <GridViewColumn  Header="#" DisplayMemberBinding="{Binding RowNum}"  Width="Auto"/>
-                                <GridViewColumn  Header="Rejestracja" DisplayMemberBinding="{Binding RegNum}"  Width="Auto"/>
-                                <GridViewColumn  Header="Kierowca/Oddział" DisplayMemberBinding="{Binding Owner}" Width="Auto"/>
-                                <GridViewColumn  Header="ID" DisplayMemberBinding="{Binding Id}" Width="Auto"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </Border>
-            </Grid>
 
 
 
         </Grid>
-
-
-
     </Grid>
-    
+
 </Page>
 
 <!--
