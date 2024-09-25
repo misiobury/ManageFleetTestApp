@@ -113,7 +113,6 @@ namespace Dashboard2.ViewModel
         public EditCarParamViewModel()
         {
             InitializeTabSection();
-
             HasCreated?.Invoke(this, EventArgs.Empty);
 
         }
